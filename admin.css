@@ -1,0 +1,584 @@
+/* ============================================================
+   ADMIN.CSS — Panel de administración Crestron Home Argentina
+   ============================================================ */
+
+/* ── Admin Trigger Button (in nav) ─────────────────────────── */
+.btn-admin-trigger {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid rgba(0,0,0,0.12);
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-light);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font);
+  letter-spacing: 0.02em;
+  margin-left: 8px;
+}
+.btn-admin-trigger:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+.btn-admin-trigger svg { width: 13px; height: 13px; }
+.btn-admin-trigger.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+/* ── Login Modal Overlay ───────────────────────────────────── */
+.admin-overlay {
+  position: fixed; inset: 0;
+  background: rgba(7, 21, 37, 0.75);
+  backdrop-filter: blur(8px);
+  z-index: 90000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.admin-overlay.show {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.admin-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 40px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 30px 80px rgba(0,0,0,0.3);
+  transform: translateY(12px) scale(0.97);
+  transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  position: relative;
+}
+.admin-overlay.show .admin-modal {
+  transform: translateY(0) scale(1);
+}
+
+.admin-modal-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 24px;
+}
+.admin-modal-logo svg { width: 22px; height: 22px; color: var(--accent); }
+.admin-modal-logo span {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--navy);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.admin-modal h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 6px;
+}
+.admin-modal p {
+  font-size: 14px;
+  color: var(--text-medium);
+  margin-bottom: 28px;
+}
+
+.admin-field {
+  margin-bottom: 16px;
+}
+.admin-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-medium);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.admin-field input {
+  width: 100%;
+  padding: 11px 14px;
+  border: 1.5px solid var(--border-med);
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-dark);
+  transition: border-color 0.2s;
+  background: var(--bg-lighter);
+}
+.admin-field input:focus {
+  border-color: var(--accent);
+  background: #fff;
+}
+
+.admin-error {
+  font-size: 13px;
+  color: #dc2626;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  display: none;
+}
+.admin-error.show { display: block; }
+
+.btn-admin-login {
+  width: 100%;
+  padding: 12px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-family: var(--font);
+}
+.btn-admin-login:hover { background: var(--accent-dark); }
+
+.admin-modal-close {
+  position: absolute;
+  top: 16px; right: 16px;
+  width: 30px; height: 30px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-light);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  color: var(--text-medium);
+  font-size: 16px;
+  transition: background 0.2s;
+}
+.admin-modal-close:hover { background: var(--border-med); }
+
+/* ── Admin Toolbar (when logged in) ────────────────────────── */
+.admin-toolbar {
+  position: fixed;
+  bottom: 24px; right: 24px;
+  z-index: 89999;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  align-items: flex-end;
+}
+.admin-toolbar.show { display: flex; }
+
+.admin-fab {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background: var(--navy);
+  color: #fff;
+  border: none;
+  border-radius: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: var(--font);
+  box-shadow: 0 4px 16px rgba(7,21,37,0.35);
+  white-space: nowrap;
+}
+.admin-fab:hover { background: var(--accent); transform: translateY(-1px); }
+.admin-fab.danger:hover { background: #dc2626; }
+.admin-fab svg { width: 15px; height: 15px; }
+
+.admin-fab-main {
+  background: var(--accent);
+  font-size: 14px;
+  padding: 12px 20px;
+}
+
+/* ── Edit Mode Indicator ────────────────────────────────────── */
+body.admin-edit-mode [data-editable] {
+  outline: 2px dashed rgba(0,157,199,0.4);
+  outline-offset: 3px;
+  cursor: text;
+  border-radius: 4px;
+  position: relative;
+}
+body.admin-edit-mode [data-editable]:hover {
+  outline-color: var(--accent);
+  background: rgba(0,157,199,0.04);
+}
+body.admin-edit-mode [data-editable]:focus {
+  outline: 2px solid var(--accent);
+  background: rgba(0,157,199,0.06);
+}
+
+.admin-edit-badge {
+  position: fixed;
+  top: 76px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--accent);
+  color: #fff;
+  padding: 9px 22px;
+  border-radius: 40px;
+  font-size: 13px;
+  font-weight: 600;
+  z-index: 89998;
+  display: none;
+  box-shadow: 0 4px 20px rgba(0,157,199,0.5);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.admin-edit-badge.show { display: block; }
+
+/* Thin teal outline around the whole page in edit mode */
+body.admin-edit-mode::before {
+  content: '';
+  position: fixed; inset: 0;
+  border: 3px solid rgba(0,157,199,0.5);
+  pointer-events: none;
+  z-index: 89990;
+}
+
+/* ── Serper Image Picker Modal ──────────────────────────────── */
+.serper-overlay {
+  position: fixed; inset: 0;
+  background: rgba(7,21,37,0.8);
+  backdrop-filter: blur(6px);
+  z-index: 200000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+.serper-overlay.show { opacity: 1; pointer-events: all; }
+
+.serper-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 28px;
+  width: 90%;
+  max-width: 700px;
+  max-height: 85vh;
+  overflow-y: auto;
+  transform: translateY(10px);
+  transition: transform 0.25s;
+}
+.serper-overlay.show .serper-modal { transform: translateY(0); }
+
+/* Image Picker tabs */
+.ip-tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--bg-light);
+  border-radius: 10px;
+  padding: 4px;
+  margin-bottom: 16px;
+}
+.ip-tab {
+  flex: 1;
+  padding: 8px 6px;
+  border: none;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  background: none;
+  color: var(--text-medium);
+  font-family: var(--font);
+  transition: all 0.15s;
+}
+.ip-tab.active { background: #fff; color: var(--accent); box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+.ip-panel { display: none; }
+.ip-panel.active { display: block; }
+.ip-upload-area {
+  border: 2px dashed var(--border-med);
+  border-radius: 12px;
+  padding: 36px 20px;
+  text-align: center;
+  cursor: pointer;
+  position: relative;
+  transition: border-color 0.2s, background 0.2s;
+  font-size: 14px;
+  color: var(--text-medium);
+  line-height: 1.6;
+}
+.ip-upload-area svg { margin: 0 auto 12px; opacity: .5; }
+.ip-upload-area:hover, .ip-upload-area.drag-over {
+  border-color: var(--accent);
+  background: var(--accent-bg);
+}
+.ip-modal { max-width: 680px; }
+
+.serper-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.serper-modal-header h3 {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-dark);
+}
+.serper-close {
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  background: var(--bg-light);
+  border-radius: 50%;
+  cursor: pointer;
+  border: none;
+  font-size: 18px;
+  color: var(--text-medium);
+}
+.serper-search-row {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+.serper-search-row input {
+  flex: 1;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border-med);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font);
+}
+.serper-search-row input:focus { border-color: var(--accent); outline: none; }
+.btn-serper-search {
+  padding: 10px 18px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  white-space: nowrap;
+}
+.btn-serper-search:hover { background: var(--accent-dark); }
+
+.serper-images-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+}
+.serper-img-item {
+  aspect-ratio: 4/3;
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: border-color 0.15s, transform 0.15s;
+}
+.serper-img-item:hover { border-color: var(--accent); transform: scale(1.02); }
+.serper-img-item.selected { border-color: var(--accent); }
+.serper-img-item img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+}
+
+.serper-loading {
+  text-align: center;
+  padding: 40px;
+  color: var(--text-medium);
+  font-size: 14px;
+}
+.serper-apply-row {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+.btn-serper-apply {
+  padding: 10px 20px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+}
+.btn-serper-cancel {
+  padding: 10px 20px;
+  background: var(--bg-light);
+  color: var(--text-medium);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font);
+}
+
+/* ── Product card admin overlay ─────────────────────────────── */
+body.admin-edit-mode .product-card {
+  position: relative;
+}
+body.admin-edit-mode .product-card .admin-img-btn {
+  display: flex;
+}
+.admin-img-btn {
+  display: none;
+  position: absolute;
+  top: 8px; right: 8px;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  background: rgba(7,21,37,0.85);
+  color: #fff;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  z-index: 10;
+  transition: background 0.15s;
+}
+.admin-img-btn:hover { background: var(--accent); }
+.admin-img-btn svg { width: 11px; height: 11px; }
+
+/* ── Blog Post Modal ────────────────────────────────────────── */
+.blog-modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(7,21,37,0.8);
+  backdrop-filter: blur(6px);
+  z-index: 91000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s;
+}
+.blog-modal-overlay.show { opacity: 1; pointer-events: all; }
+
+.blog-modal {
+  background: #fff;
+  border-radius: 16px;
+  padding: 32px;
+  width: 90%;
+  max-width: 680px;
+  max-height: 90vh;
+  overflow-y: auto;
+  transform: translateY(12px);
+  transition: transform 0.25s;
+}
+.blog-modal-overlay.show .blog-modal { transform: translateY(0); }
+
+.blog-modal h3 {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-bottom: 24px;
+}
+.blog-field { margin-bottom: 16px; }
+.blog-field label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-medium);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+.blog-field input,
+.blog-field textarea,
+.blog-field select {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1.5px solid var(--border-med);
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: var(--font);
+  color: var(--text-dark);
+  transition: border-color 0.2s;
+}
+.blog-field input:focus,
+.blog-field textarea:focus { border-color: var(--accent); outline: none; }
+.blog-field textarea { resize: vertical; min-height: 120px; }
+
+.blog-ai-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.btn-ai-generate {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: opacity 0.2s;
+  white-space: nowrap;
+}
+.btn-ai-generate:hover { opacity: 0.9; }
+.btn-ai-generate svg { width: 14px; height: 14px; }
+.btn-ai-generate.loading { opacity: 0.7; cursor: wait; }
+
+.blog-modal-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 20px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+.btn-blog-save {
+  padding: 10px 22px;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+}
+.btn-blog-cancel {
+  padding: 10px 18px;
+  background: var(--bg-light);
+  color: var(--text-medium);
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  font-family: var(--font);
+}
+
+/* ── Brand admin overlay ────────────────────────────────────── */
+body.admin-edit-mode .brand-card .admin-brand-refresh {
+  display: flex;
+}
+.admin-brand-refresh {
+  display: none;
+  position: absolute;
+  bottom: 6px; right: 6px;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  background: rgba(7,21,37,0.8);
+  color: #fff;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  font-family: var(--font);
+  z-index: 5;
+}
+.admin-brand-refresh:hover { background: var(--accent); }

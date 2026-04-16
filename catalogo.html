@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogo Interactivo | Crestron Home Argentina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+  <style>
+    :root {
+      --cat-bg: #e8edf3;
+      --cat-page-bg: #fff;
+      --cat-shadow: 0 12px 48px rgba(0,0,0,0.22);
+      --cat-accent: #009DC7;
+      /* A4: 210 × 297 mm */
+      --a4-max: 820px;
+    }
+
+    /* ── Top Bar ─────────────────────────── */
+    .cat-topbar {
+      background: var(--hero-bg);
+      padding: 0 20px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      flex-wrap: nowrap;
+    }
+    .cat-back {
+      color: rgba(255,255,255,0.65);
+      font-size: 13px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+      transition: color .2s;
+      flex-shrink: 0;
+    }
+    .cat-back:hover { color: #fff; }
+    .cat-title {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .cat-title span { color: var(--cat-accent); }
+
+    .cat-mode-toggle {
+      display: flex;
+      background: rgba(255,255,255,0.1);
+      border-radius: 100px;
+      padding: 3px;
+      gap: 2px;
+      flex-shrink: 0;
+    }
+    .cat-mode-btn {
+      padding: 5px 12px;
+      border-radius: 100px;
+      border: none;
+      background: transparent;
+      color: rgba(255,255,255,0.65);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      white-space: nowrap;
+    }
+    .cat-mode-btn.active { background: var(--cat-accent); color: #fff; }
+
+    .cat-search {
+      display: flex;
+      align-items: center;
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.15);
+      border-radius: 100px;
+      padding: 5px 12px;
+      gap: 7px;
+      width: 200px;
+      flex-shrink: 0;
+    }
+    .cat-search input {
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #fff;
+      font-size: 12px;
+      font-family: inherit;
+      width: 100%;
+    }
+    .cat-search input::placeholder { color: rgba(255,255,255,0.4); }
+    .cat-search svg { color: rgba(255,255,255,0.5); flex-shrink: 0; }
+
+    .cat-print-btn {
+      padding: 6px 14px;
+      border-radius: 100px;
+      border: 1.5px solid rgba(255,255,255,0.3);
+      background: transparent;
+      color: rgba(255,255,255,0.8);
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s;
+      flex-shrink: 0;
+      white-space: nowrap;
+    }
+    .cat-print-btn:hover { background: rgba(255,255,255,0.15); color: #fff; }
+    .cat-page-counter {
+      font-size: 11px;
+      color: rgba(255,255,255,0.45);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* ── Main ─────────────────────────────── */
+    .cat-main {
+      background: var(--cat-bg);
+      min-height: calc(100vh - 60px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px 80px;
+    }
+
+    /* ═══════════════════════════════════════
+       PDF MODE — A4 Pages
+    ═══════════════════════════════════════ */
+    .cat-pdf-container {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      width: 100%;
+      max-width: var(--a4-max);
+    }
+    .cat-pdf-page {
+      background: var(--cat-page-bg);
+      border-radius: 4px;
+      box-shadow: var(--cat-shadow);
+      overflow: hidden;
+      /* A4 aspect ratio */
+      aspect-ratio: 210 / 297;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+    }
+    /* Cover and category pages fill their height differently */
+    .cat-pdf-page.cat-cover-page,
+    .cat-pdf-page.cat-cat-page {
+      aspect-ratio: unset;
+      min-height: auto;
+    }
+
+    /* ── A4 Page inner structure ── */
+    .cat-a4-inner {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Page footer ──────────────── */
+    .cat-page-footer {
+      height: 36px;
+      flex-shrink: 0;
+      background: #f8fafc;
+      border-top: 1.5px solid #e8edf2;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 20px;
+      font-size: 10px;
+      color: #8a9ab0;
+      font-weight: 500;
+    }
+    .cat-page-footer-center {
+      font-weight: 700;
+      color: var(--cat-accent);
+    }
+
+    /* ── Cover page ──────────────── */
+    .cat-pdf-cover {
+      background: var(--hero-bg);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 60px 56px;
+      color: #fff;
+      position: relative;
+      overflow: hidden;
+    }
+    .cat-pdf-cover::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 80% 60% at 20% 50%, rgba(0,157,199,0.18) 0%, transparent 70%);
+    }
+    .cat-pdf-cover-inner { position: relative; }
+    .cat-pdf-cover h2 { font-size: 32px; font-weight: 800; margin: 0 0 12px; line-height: 1.2; }
+    .cat-pdf-cover p { font-size: 14px; color: rgba(255,255,255,0.6); margin: 0 0 8px; }
+    .cat-pdf-cover-tag {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--cat-accent);
+      margin-bottom: 20px;
+    }
+    .cat-pdf-cover-stats {
+      margin-top: 32px;
+      display: flex;
+      gap: 32px;
+    }
+    .cat-pdf-cover-stat-n { font-size: 28px; font-weight: 800; color: var(--cat-accent); }
+    .cat-pdf-cover-stat-l { font-size: 11px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: .06em; margin-top: 2px; }
+
+    /* ── Category separator page ── */
+    .cat-category-header {
+      background: linear-gradient(135deg, #071525 0%, #0f2a45 100%);
+      flex: 1;
+      display: flex;
+      align-items: center;
+      padding: 48px 56px;
+      gap: 24px;
+      color: #fff;
+    }
+    .cat-category-icon { font-size: 52px; flex-shrink: 0; }
+    .cat-category-header-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--cat-accent);
+      margin-bottom: 8px;
+    }
+    .cat-category-header h3 { font-size: 28px; font-weight: 800; margin: 0; }
+    .cat-category-header p { font-size: 13px; color: rgba(255,255,255,0.5); margin: 8px 0 0; }
+
+    /* ── Product page content ──────── */
+    .cat-product-page {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      min-height: 0;
+    }
+    .cat-product-header {
+      height: 200px;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, #071525, #1a3050);
+      background-size: cover;
+      background-position: center;
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      padding: 20px 24px;
+    }
+    .cat-product-header-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(7,21,37,0.9) 0%, rgba(7,21,37,0.35) 50%, transparent 100%);
+    }
+    .cat-product-header-text { position: relative; z-index: 2; }
+    .cat-product-cat-label {
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+      color: var(--cat-accent);
+      margin-bottom: 4px;
+    }
+    .cat-product-header-name { font-size: 20px; font-weight: 800; color: #fff; line-height: 1.2; }
+    .cat-product-header-model { font-size: 12px; color: rgba(255,255,255,0.55); margin-top: 3px; }
+
+    .cat-edit-header-btn {
+      position: absolute;
+      top: 12px; right: 12px;
+      z-index: 5;
+      background: rgba(0,0,0,0.45);
+      border: 1px solid rgba(255,255,255,0.25);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      padding: 5px 10px;
+      cursor: pointer;
+      font-family: inherit;
+      display: none;
+      align-items: center;
+      gap: 5px;
+    }
+    body.admin-edit-mode .cat-edit-header-btn { display: flex; }
+
+    /* Product body: top row = image + specs, bottom = description */
+    .cat-product-body {
+      flex: 1;
+      overflow: hidden;
+      padding: 16px 24px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      min-height: 0;
+    }
+    /* Top row: image left, specs right */
+    .cat-product-top-row {
+      display: flex;
+      gap: 20px;
+      flex-shrink: 0;
+    }
+    .cat-product-img-col { width: 150px; flex-shrink: 0; }
+    .cat-product-img-box {
+      width: 150px;
+      height: 150px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #f0f4f8, #e4eaf2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 1.5px solid #e8edf2;
+      font-size: 40px;
+    }
+    .cat-product-img-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .cat-product-specs-col { flex: 1; min-width: 0; }
+    .cat-specs-table { width: 100%; border-collapse: collapse; font-size: 11.5px; }
+    .cat-specs-table tr { border-bottom: 1px solid #f0f4f8; }
+    .cat-specs-table tr:last-child { border-bottom: none; }
+    .cat-specs-table td { padding: 5.5px 6px; vertical-align: top; }
+    .cat-specs-table td:first-child { font-weight: 600; color: #1a2d40; width: 44%; white-space: nowrap; }
+    .cat-specs-table td:last-child { color: #4a5e72; }
+    /* Bottom: full-width description */
+    .cat-product-desc-row {
+      flex: 1;
+      overflow: hidden;
+      border-top: 1px solid #eef2f6;
+      padding-top: 12px;
+    }
+    .cat-product-desc {
+      font-size: 12.5px;
+      line-height: 1.8;
+      color: #4a5e72;
+      margin: 0;
+    }
+    /* Inline image inside description */
+    .cat-desc-img {
+      max-width: 100%;
+      border-radius: 8px;
+      margin: 8px 0;
+      display: block;
+    }
+    .cat-desc-img.left {
+      float: left;
+      margin: 4px 12px 4px 0;
+      max-width: 45%;
+    }
+    .cat-desc-img.right {
+      float: right;
+      margin: 4px 0 4px 12px;
+      max-width: 45%;
+    }
+    .cat-desc-clearfix::after { content: ''; display: table; clear: both; }
+    .cat-mfr-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--cat-accent);
+      margin-top: 8px;
+    }
+
+    /* Admin bar inside product */
+    .cat-admin-bar {
+      padding: 7px 16px;
+      background: #f8fafc;
+      border-top: 1px solid #e8edf2;
+      display: none;
+      gap: 8px;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+    body.admin-edit-mode .cat-admin-bar { display: flex; }
+    .cat-admin-btn {
+      padding: 4px 11px;
+      border-radius: 6px;
+      border: 1.5px solid #d1dde8;
+      background: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+      cursor: pointer;
+      color: #4a5e72;
+      transition: all .18s;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .cat-admin-btn:hover { border-color: var(--cat-accent); color: var(--cat-accent); }
+    .cat-admin-btn.primary { background: var(--cat-accent); color: #fff; border-color: var(--cat-accent); }
+
+    /* ═══════════════════════════════════════
+       MAGAZINE MODE
+    ═══════════════════════════════════════ */
+    .cat-magazine-container {
+      width: 100%;
+      max-width: 1160px;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+    }
+
+    .cat-spread-wrapper {
+      width: 100%;
+    }
+    .cat-spread {
+      display: flex;
+      gap: 0;
+      width: 100%;
+      height: 700px;
+      position: relative;
+      /* Transition for slide animation */
+      transition: opacity .28s ease, transform .28s ease;
+    }
+    .cat-spread.transitioning {
+      opacity: 0;
+      transform: translateX(var(--slide-dir, -30px));
+    }
+    /* Book spine shadow */
+    .cat-spread::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      top: 4%;
+      bottom: 4%;
+      width: 3px;
+      transform: translateX(-50%);
+      background: linear-gradient(to right, rgba(0,0,0,0.10), rgba(0,0,0,0.03), rgba(0,0,0,0.10));
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .cat-page-left,
+    .cat-page-right {
+      flex: 1;
+      background: var(--cat-page-bg);
+      overflow: hidden;
+      position: relative;
+    }
+    .cat-page-left {
+      border-radius: 16px 0 0 16px;
+      box-shadow: -6px 0 24px rgba(0,0,0,0.08), var(--cat-shadow);
+      border-right: 1.5px solid #e8edf2;
+    }
+    .cat-page-right {
+      border-radius: 0 16px 16px 0;
+      box-shadow: 6px 0 24px rgba(0,0,0,0.08), var(--cat-shadow);
+    }
+
+    /* Nav */
+    .cat-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .cat-nav-btn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      border: 2px solid var(--cat-accent);
+      background: #fff;
+      color: var(--cat-accent);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+      transition: all .2s;
+      box-shadow: 0 2px 12px rgba(0,157,199,0.15);
+    }
+    .cat-nav-btn:hover { background: var(--cat-accent); color: #fff; }
+    .cat-nav-btn:disabled { opacity: 0.28; cursor: default; border-color: #ccc; color: #ccc; box-shadow: none; }
+    .cat-nav-info {
+      font-size: 13px;
+      font-weight: 600;
+      color: #4a5e72;
+      min-width: 110px;
+      text-align: center;
+    }
+
+    /* ── No results ─────────────────── */
+    .cat-no-results {
+      text-align: center;
+      padding: 80px 20px;
+      color: #8a9ab0;
+      font-size: 15px;
+    }
+
+    /* ═══════════════════════════════════════
+       CATALOG EDIT MODAL
+    ═══════════════════════════════════════ */
+    .cat-edit-modal-overlay {
+      position: fixed; inset: 0;
+      background: rgba(7,21,37,0.78);
+      backdrop-filter: blur(10px);
+      z-index: 99000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .cat-edit-modal {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px;
+      max-width: 580px;
+      width: 100%;
+      max-height: 88vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .cat-edit-modal h4 { font-size: 18px; font-weight: 700; margin: 0 0 22px; }
+    .cat-edit-field { margin-bottom: 16px; }
+    .cat-edit-field label { display: block; font-size: 12px; font-weight: 600; color: #1a2d40; margin-bottom: 6px; }
+    .cat-edit-field textarea, .cat-edit-field input[type="text"], .cat-edit-field input[type="url"] {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #d1dde8;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 13px;
+      box-sizing: border-box;
+      transition: border-color .2s;
+    }
+    .cat-edit-field textarea { resize: vertical; }
+    .cat-edit-field textarea:focus, .cat-edit-field input:focus { border-color: var(--cat-accent); outline: none; }
+    .cat-edit-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 22px; }
+    .cat-edit-close {
+      position: absolute;
+      top: 16px; right: 16px;
+      background: #f0f4f8;
+      border: none;
+      border-radius: 50%;
+      width: 32px; height: 32px;
+      cursor: pointer;
+      font-size: 15px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .cat-ai-row { display: flex; gap: 8px; margin-bottom: 16px; }
+    .cat-ai-row input {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1.5px solid rgba(99,102,241,.3);
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .cat-ai-row input:focus { border-color: #6366f1; outline: none; }
+    #catAiStatus { font-size: 12px; color: #6366f1; margin-top: 6px; display: none; }
+
+    /* Image picker row inside modal */
+    .cat-img-picker-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .cat-img-picker-row input {
+      flex: 1;
+      padding: 9px 14px;
+      border: 1.5px solid #d1dde8;
+      border-radius: 8px;
+      font-family: inherit;
+      font-size: 13px;
+    }
+    .cat-img-pick-btn {
+      padding: 8px 14px;
+      border: 1.5px solid #d1dde8;
+      border-radius: 8px;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 600;
+      font-family: inherit;
+      color: #4a5e72;
+      white-space: nowrap;
+      transition: all .2s;
+    }
+    .cat-img-pick-btn:hover { border-color: var(--cat-accent); color: var(--cat-accent); }
+    .cat-img-preview {
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .cat-img-preview img { width: 100%; max-height: 120px; object-fit: cover; display: block; }
+
+    /* ═══════════════════════════════════════
+       PRINT / DOWNLOAD CSS
+    ═══════════════════════════════════════ */
+    @media print {
+      .cat-topbar, .cat-nav, .cat-admin-bar, .cat-edit-header-btn,
+      .cat-edit-modal-overlay, .cursor-dot, .cursor-outline,
+      .admin-toolbar, #adminLoginOverlay { display: none !important; }
+      .cat-main { padding: 0; background: #fff; }
+      .cat-pdf-container { gap: 0; max-width: 100%; }
+      .cat-pdf-page {
+        page-break-after: always;
+        page-break-inside: avoid;
+        border-radius: 0;
+        box-shadow: none;
+        aspect-ratio: unset;
+        height: 100vh;
+      }
+      .cat-magazine-container { display: none !important; }
+    }
+    @page { size: A4; margin: 0; }
+
+    /* ── Responsive ─────────────────── */
+    @media (max-width: 900px) {
+      .cat-spread { height: 580px; }
+      .cat-product-header { height: 150px; }
+      .cat-product-img-box { width: 120px; height: 120px; }
+      .cat-product-img-col { width: 120px; }
+      .cat-search { width: 140px; }
+    }
+    @media (max-width: 640px) {
+      .cat-topbar { gap: 8px; padding: 0 10px; }
+      .cat-title { font-size: 12px; }
+      .cat-search { display: none; }
+      .cat-print-btn span { display: none; }
+      .cat-spread { flex-direction: column; height: auto; }
+      .cat-page-left { border-radius: 16px 16px 0 0; border-right: none; border-bottom: 1.5px solid #e8edf2; }
+      .cat-page-right { border-radius: 0 0 16px 16px; }
+      .cat-spread::after { display: none; }
+      .cat-product-body { flex-direction: column; }
+      .cat-product-img-col { width: 100%; }
+      .cat-product-img-box { width: 100%; height: 140px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-outline" id="cursorOutline"></div>
+
+  <!-- ===== TOP BAR ===== -->
+  <div class="cat-topbar">
+    <a href="index.html" class="cat-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver
+    </a>
+    <div class="cat-title">Catálogo <span>Interactivo</span></div>
+
+    <div class="cat-search">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="search" id="catSearch" placeholder="Buscar producto...">
+    </div>
+
+    <div class="cat-mode-toggle">
+      <button class="cat-mode-btn active" id="btnModePdf">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/></svg>
+        PDF
+      </button>
+      <button class="cat-mode-btn" id="btnModeMag">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+        Revista
+      </button>
+    </div>
+
+    <button class="cat-print-btn" id="catPrintBtn">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      <span>Imprimir / PDF</span>
+    </button>
+
+    <div class="cat-page-counter" id="catPageCounter"></div>
+  </div>
+
+  <!-- ===== MAIN ===== -->
+  <div class="cat-main" id="catMain">
+
+    <!-- PDF MODE -->
+    <div class="cat-pdf-container" id="catPdfContainer"></div>
+
+    <!-- MAGAZINE MODE -->
+    <div class="cat-magazine-container" id="catMagContainer">
+      <div class="cat-spread-wrapper">
+        <div class="cat-spread" id="catSpread">
+          <div class="cat-page-left" id="catPageLeft"></div>
+          <div class="cat-page-right" id="catPageRight"></div>
+        </div>
+      </div>
+      <div class="cat-nav">
+        <button class="cat-nav-btn" id="catPrevBtn" disabled>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div class="cat-nav-info" id="catNavInfo"></div>
+        <button class="cat-nav-btn" id="catNextBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="20" height="20"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== CATALOG EDIT MODAL ===== -->
+  <div class="cat-edit-modal-overlay" id="catEditOverlay" style="display:none;">
+    <div class="cat-edit-modal">
+      <button class="cat-edit-close" id="catEditClose">✕</button>
+      <h4 id="catEditTitle">Editar producto en catálogo</h4>
+
+      <!-- AI description -->
+      <div style="background:linear-gradient(135deg,#f0f4ff,#e8f0fe);border:1px solid rgba(99,102,241,.2);border-radius:12px;padding:16px;margin-bottom:18px;">
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#6366f1;margin-bottom:8px;">✨ Descripción con IA</div>
+        <div class="cat-ai-row">
+          <input type="text" id="catAiPrompt" placeholder="Usos del producto, ventajas, público objetivo...">
+          <button class="btn-ai-generate" id="catBtnAi">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13"><path d="M12 2l2.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+            Generar
+          </button>
+        </div>
+        <div id="catAiStatus"></div>
+      </div>
+
+      <!-- Description -->
+      <div class="cat-edit-field">
+        <label>Descripción para el catálogo</label>
+        <textarea id="catEditDesc" rows="5" placeholder="Descripción detallada del producto..."></textarea>
+      </div>
+
+      <!-- Header image -->
+      <div class="cat-edit-field">
+        <label>Imagen de cabecera <span style="font-weight:400;color:#8a9ab0">(Recomendado: 1400 × 500 px)</span></label>
+        <div class="cat-img-picker-row">
+          <input type="text" id="catEditHeaderImg" placeholder="URL de la imagen...">
+          <button class="cat-img-pick-btn" id="catPickHeaderBtn">🖼️ Elegir</button>
+        </div>
+        <div class="cat-img-preview" id="catHeaderImgPreview"></div>
+      </div>
+
+      <!-- Product image -->
+      <div class="cat-edit-field">
+        <label>Foto del producto <span style="font-weight:400;color:#8a9ab0">(Recomendado: 800 × 800 px)</span></label>
+        <div class="cat-img-picker-row">
+          <input type="text" id="catEditProdImg" placeholder="URL de la imagen...">
+          <button class="cat-img-pick-btn" id="catPickProdBtn">🖼️ Elegir</button>
+        </div>
+        <div class="cat-img-preview" id="catProdImgPreview"></div>
+      </div>
+
+      <!-- Inline description image -->
+      <div class="cat-edit-field">
+        <label>Imagen en descripción <span style="font-weight:400;color:#8a9ab0">(se incrusta junto al texto)</span></label>
+        <div class="cat-img-picker-row">
+          <input type="text" id="catEditDescImg" placeholder="URL de la imagen...">
+          <button class="cat-img-pick-btn" id="catPickDescImgBtn">🖼️ Elegir</button>
+        </div>
+        <div style="display:flex;gap:8px;margin-top:8px;align-items:center;">
+          <span style="font-size:12px;font-weight:600;color:#4a5e72;">Posición:</span>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;"><input type="radio" name="catDescImgPos" value="left" checked> Izquierda</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;"><input type="radio" name="catDescImgPos" value="right"> Derecha</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:12px;cursor:pointer;"><input type="radio" name="catDescImgPos" value="center"> Arriba</label>
+        </div>
+        <div class="cat-img-preview" id="catDescImgPreview"></div>
+      </div>
+
+      <!-- Manufacturer URL -->
+      <div class="cat-edit-field">
+        <label>URL del fabricante (hipervínculo)</label>
+        <input type="url" id="catEditUrl" placeholder="https://www.crestron.com/Products/...">
+      </div>
+
+      <div class="cat-edit-modal-actions">
+        <button class="cat-admin-btn" id="catEditCancel">Cancelar</button>
+        <button class="cat-admin-btn primary" id="catEditSave">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+  <script src="admin.js"></script>
+  <script src="catalogo.js"></script>
+</body>
+</html>

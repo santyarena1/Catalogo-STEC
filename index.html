@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Crestron Home Argentina | Automatización Residencial Premium</title>
+  <meta name="description" content="Crestron Home en Argentina. Control total de tu hogar: iluminación, audio, video, climatización y más. Distribuidor oficial: Soundtec SRL.">
+  <meta name="theme-color" content="#080f18">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+
+  <!-- Custom Cursor -->
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-outline" id="cursorOutline"></div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a href="#inicio" class="logo">
+        <img src="crestron-home-logo.svg" alt="Crestron Home" class="logo-img logo-dark">
+        <img src="crestron-home-logo-white.svg" alt="Crestron Home" class="logo-img logo-white">
+      </a>
+      <ul class="nav-links" id="navLinks">
+        <li><a href="#inicio" class="nav-link">Inicio</a></li>
+        <li><a href="#plataforma" class="nav-link">Plataforma</a></li>
+        <li><a href="#escenarios" class="nav-link">Escenarios</a></li>
+        <li><a href="#soluciones" class="nav-link">Soluciones</a></li>
+        <li><a href="#productos" class="nav-link">Productos</a></li>
+        <li><a href="#recursos" class="nav-link">Recursos</a></li>
+        <li><a href="#blog" class="nav-link">Blog</a></li>
+        <li><a href="#contacto" class="nav-link">Contacto</a></li>
+        <li class="nav-mobile-auth">
+          <a href="#" class="btn-nav-login nav-link">Iniciar sesión</a>
+          <a href="#" class="btn-nav-register mobile">Registrarse</a>
+        </li>
+      </ul>
+      <div class="nav-auth">
+        <a href="#" class="btn-nav-login">Iniciar sesión</a>
+        <a href="#" class="btn-nav-register">Registrarse</a>
+      </div>
+      <a href="#contacto" class="btn-nav-cta">Consultar</a>
+      <button class="btn-admin-trigger" id="adminTrigger" title="Panel de administración">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+      </button>
+      <button class="menu-toggle" id="menuToggle" aria-label="Menú">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===== HERO ===== -->
+  <section id="inicio" class="hero">
+    <div class="hero-bg">
+      <div class="hero-grid-lines"></div>
+      <div class="hero-orb hero-orb-1"></div>
+      <div class="hero-orb hero-orb-2"></div>
+      <!-- Foto: sala de estar de lujo con iluminación tenue y accesorios tecnológicos -->
+      <div class="hero-slides">
+        <div class="hero-slide" data-slide="0" style="background-image:url('img/hero-1.jpg')"></div>
+        <div class="hero-slide" data-slide="1" style="background-image:url('img/hero-2.jpg')"></div>
+        <div class="hero-slide" data-slide="2" style="background-image:url('img/hero-3.jpg')"></div>
+        <div class="hero-slide" data-slide="3" style="background-image:url('img/hero-4.jpg')"></div>
+      </div>
+      <div class="admin-slides-panel" id="adminSlidesPanel">
+        <span class="admin-slides-label">📷 Imágenes del slider:</span>
+        <button class="admin-slide-edit-btn" data-slide="0">Foto 1</button>
+        <button class="admin-slide-edit-btn" data-slide="1">Foto 2</button>
+        <button class="admin-slide-edit-btn" data-slide="2">Foto 3</button>
+        <button class="admin-slide-edit-btn" data-slide="3">Foto 4</button>
+      </div>
+    </div>
+    <button class="hero-prev" aria-label="Anterior">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <button class="hero-next" aria-label="Siguiente">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+    </button>
+    <div class="hero-dots">
+      <button class="hero-dot active" aria-label="Slide 1"></button>
+      <button class="hero-dot" aria-label="Slide 2"></button>
+      <button class="hero-dot" aria-label="Slide 3"></button>
+      <button class="hero-dot" aria-label="Slide 4"></button>
+    </div>
+    <div class="hero-content">
+      <div class="hero-eyebrow">
+        <span class="eyebrow-line"></span>
+        Crestron Home OS 4 — Disponible en Argentina
+        <span class="eyebrow-line"></span>
+      </div>
+      <h1 class="hero-title" data-editable="hero-title">Tu hogar,<br><span class="hero-accent">simplemente inteligente.</span></h1>
+      <p class="hero-subtitle" data-editable="hero-subtitle">Una plataforma. Control total. Sin complicaciones.</p>
+      <div class="hero-buttons">
+        <a href="#escenarios" class="btn-primary">Ver Escenarios</a>
+        <a href="#productos" class="btn-ghost">
+          Explorar Catálogo
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <span class="stat-number">50+</span>
+          <span class="stat-label">Años de innovación</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="hero-stat">
+          <span class="stat-number">$0</span>
+          <span class="stat-label">Sin suscripción mensual</span>
+        </div>
+        <div class="stat-sep"></div>
+        <div class="hero-stat">
+          <span class="stat-number">1</span>
+          <span class="stat-label">App para todo el hogar</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard strip — scene & quick controls -->
+    <div class="hero-dashboard-strip" id="heroDashboard">
+      <span class="hds-label">Escena activa</span>
+      <button class="hds-btn active" onclick="heroScene(this,'Noche')">🌙 Noche</button>
+      <button class="hds-btn" onclick="heroScene(this,'Cine')">🎬 Cine</button>
+      <button class="hds-btn" onclick="heroScene(this,'Amanecer')">🌅 Amanecer</button>
+      <button class="hds-btn" onclick="heroScene(this,'Reunión')">💼 Reunión</button>
+      <div class="hds-sep"></div>
+      <div class="hds-widget">
+        <span>💡</span>
+        <input type="range" class="hds-widget-slider" min="0" max="100" value="35"
+          oninput="this.nextElementSibling.textContent=this.value+'%'">
+        <span class="hds-widget-val">35%</span>
+      </div>
+      <div class="hds-widget">
+        <span>🌡️</span>
+        <span class="hds-widget-val" id="heroTemp">22°C</span>
+      </div>
+    </div>
+
+    <a href="#plataforma" class="hero-scroll">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M7 10l5 5 5-5"/></svg>
+    </a>
+  </section>
+
+  <!-- ===== CRESTRON HOME OS ===== -->
+  <section id="plataforma" class="platform-section">
+    <div class="container">
+      <div class="platform-grid">
+        <div class="platform-text reveal">
+          <div class="section-label">Sistema Operativo</div>
+          <h2 data-editable="platform-h2">El sistema operativo<br>de tu hogar.</h2>
+          <p class="lead-text" data-editable="platform-lead">Crestron Home OS 4 es la plataforma unificada que pone el control total de tu hogar en la palma de tu mano. Sin suscripciones. Sin complicaciones.</p>
+          <ul class="platform-features">
+            <li class="pf-item">
+              <div class="pf-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+              </div>
+              <div class="pf-text">
+                <strong>Iluminación inteligente</strong>
+                <p>Control circadiano, escenas y automatizaciones que cuidan tu ritmo natural.</p>
+              </div>
+            </li>
+            <li class="pf-item">
+              <div class="pf-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M19.07 4.93a10 10 0 010 14.14M15.54 8.46a5 5 0 010 7.07"/></svg>
+              </div>
+              <div class="pf-text">
+                <strong>Audio multiroom</strong>
+                <p>Música en cada ambiente, sincronizada. Apple Music, Spotify y más.</p>
+              </div>
+            </li>
+            <li class="pf-item">
+              <div class="pf-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+              </div>
+              <div class="pf-text">
+                <strong>Video 4K distribuido</strong>
+                <p>Contenido en ultra alta definición en cada pantalla del hogar.</p>
+              </div>
+            </li>
+            <li class="pf-item">
+              <div class="pf-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+              </div>
+              <div class="pf-text">
+                <strong>Seguridad integrada</strong>
+                <p>Cerraduras, videoporteros y cámaras en una sola plataforma.</p>
+              </div>
+            </li>
+          </ul>
+          <div class="no-sub-badge">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+            <div>
+              <strong>Sin suscripción mensual</strong>
+              <span>Pagás una sola vez. El sistema es tuyo para siempre.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="platform-visual reveal" style="display:flex;flex-direction:column;align-items:center;">
+          <div class="demo-controls-bar">
+            <div class="demo-device-toggle">
+              <button class="demo-toggle-btn active" id="chappBtnPhone" onclick="AppDemo.setDevice('phone')">📱 Teléfono</button>
+              <button class="demo-toggle-btn" id="chappBtnTablet" onclick="AppDemo.setDevice('tablet')">📲 Tablet</button>
+            </div>
+            <button class="demo-theme-btn" id="chappThemeBtn" onclick="AppDemo.toggleTheme()">🌙 Modo oscuro</button>
+          </div>
+          <div class="chapp-device chapp-dark" id="chappDevice">
+            <div class="chapp-device-notch"></div>
+            <div id="chappScreen"></div>
+            <div class="chapp-device-bar"></div>
+          </div>
+          <div class="mockup-label" style="margin-top:18px;color:rgba(220,230,242,0.38);font-size:12px;letter-spacing:.05em;">App Crestron Home — iOS & Android · demo interactiva</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ESCENARIOS ===== -->
+  <section id="escenarios" class="scenarios-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Escenarios</div>
+        <h2>Un toque. El ambiente<br>perfecto.</h2>
+        <p class="section-subtitle">Cada momento del día tiene su propio ambiente. Crestron Home lo configura de forma automática o con un solo toque.</p>
+      </div>
+
+      <div class="scenarios-tabs" role="tablist">
+        <button class="scenario-tab active" data-scene="noche" onclick="switchScene('noche')">🌙 Noche</button>
+        <button class="scenario-tab" data-scene="cine" onclick="switchScene('cine')">🎬 Cine</button>
+        <button class="scenario-tab" data-scene="amanecer" onclick="switchScene('amanecer')">🌅 Amanecer</button>
+        <button class="scenario-tab" data-scene="reunion" onclick="switchScene('reunion')">💼 Reunión</button>
+      </div>
+
+      <div class="scenarios-stage">
+
+        <!-- NOCHE -->
+        <div class="scenario-panel active" id="scene-noche">
+          <div class="scenario-image">
+            <!-- Foto: dormitorio de lujo con iluminación tenue azul-cálida, vista nocturna exterior -->
+            <div class="scenario-img-placeholder" style="background:linear-gradient(135deg,#050e1a,#0a1a2e);">
+              <span class="sc-icon">🌙</span>
+              <span>Dormitorio · iluminación nocturna tenue</span>
+            </div>
+            <div class="scenario-img-overlay"></div>
+          </div>
+          <div class="scenario-content">
+            <div class="scenario-eyebrow">Escenario Noche</div>
+            <h3>El hogar se prepara para el descanso.</h3>
+            <p>Las luces bajan a un 8%, la temperatura desciende a 19°C, las cortinas se cierran y el audio se apaga gradualmente. Todo en un solo toque.</p>
+            <div class="scenario-controls">
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">💡</span>
+                <span class="sc-ctrl-name">Iluminación</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="8" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">8%</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🌡️</span>
+                <span class="sc-ctrl-name">Temperatura</span>
+                <input type="range" class="sc-ctrl-slider" min="16" max="30" value="19" oninput="this.nextElementSibling.textContent=this.value+'°C'">
+                <span class="sc-ctrl-val">19°C</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🪟</span>
+                <span class="sc-ctrl-name">Cortinas</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">100%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CINE -->
+        <div class="scenario-panel" id="scene-cine">
+          <div class="scenario-image">
+            <!-- Foto: sala de cine privada con pantalla grande, luces de acento tenues, asientos de cuero -->
+            <div class="scenario-img-placeholder" style="background:linear-gradient(135deg,#0a0005,#1a0820);">
+              <span class="sc-icon">🎬</span>
+              <span>Home theater · luces de acento ultrabajas</span>
+            </div>
+            <div class="scenario-img-overlay"></div>
+          </div>
+          <div class="scenario-content">
+            <div class="scenario-eyebrow">Escenario Cine</div>
+            <h3>Experiencia de sala en tu propio hogar.</h3>
+            <p>Las luces LED de acento bajan al 3%, las cortinas se cierran totalmente, el proyector se enciende y el audio se calibra en modo surround automáticamente.</p>
+            <div class="scenario-controls">
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">💡</span>
+                <span class="sc-ctrl-name">Iluminación acento</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="3" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">3%</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🔊</span>
+                <span class="sc-ctrl-name">Volumen surround</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="75" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">75%</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🪟</span>
+                <span class="sc-ctrl-name">Cortinas blackout</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">100%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AMANECER -->
+        <div class="scenario-panel" id="scene-amanecer">
+          <div class="scenario-image">
+            <!-- Foto: living con grandes ventanales al amanecer, luz natural cálida, cortinas a medio abrir -->
+            <div class="scenario-img-placeholder" style="background:linear-gradient(135deg,#1a0800,#2d1505,#3d2010);">
+              <span class="sc-icon">🌅</span>
+              <span>Living · luz cálida de amanecer</span>
+            </div>
+            <div class="scenario-img-overlay"></div>
+          </div>
+          <div class="scenario-content">
+            <div class="scenario-eyebrow">Escenario Amanecer</div>
+            <h3>El despertar más suave que imaginaste.</h3>
+            <p>Las luces aumentan gradualmente simulando el amanecer, las cortinas se abren lentamente, la temperatura sube a 22°C y comienza tu playlist favorita en bajo volumen.</p>
+            <div class="scenario-controls">
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">💡</span>
+                <span class="sc-ctrl-name">Luz cálida (2700K)</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="60" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">60%</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🌡️</span>
+                <span class="sc-ctrl-name">Temperatura</span>
+                <input type="range" class="sc-ctrl-slider" min="16" max="30" value="22" oninput="this.nextElementSibling.textContent=this.value+'°C'">
+                <span class="sc-ctrl-val">22°C</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🪟</span>
+                <span class="sc-ctrl-name">Cortinas</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="40" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">40%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- REUNIÓN -->
+        <div class="scenario-panel" id="scene-reunion">
+          <div class="scenario-image">
+            <!-- Foto: sala de reuniones de home office o living configurado para trabajo, luz blanca neutra, pantalla con presentación -->
+            <div class="scenario-img-placeholder" style="background:linear-gradient(135deg,#05101a,#0a1e30);">
+              <span class="sc-icon">💼</span>
+              <span>Home office · luz neutra fría · pantalla activa</span>
+            </div>
+            <div class="scenario-img-overlay"></div>
+          </div>
+          <div class="scenario-content">
+            <div class="scenario-eyebrow">Escenario Reunión</div>
+            <h3>Productividad al más alto nivel.</h3>
+            <p>Luz blanca neutra al 90%, temperatura de 20°C para máxima concentración, la pantalla de videoconferencia se enciende y el audio se configura en modo "manos libres".</p>
+            <div class="scenario-controls">
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">💡</span>
+                <span class="sc-ctrl-name">Luz neutra (4000K)</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="90" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">90%</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🌡️</span>
+                <span class="sc-ctrl-name">Temperatura</span>
+                <input type="range" class="sc-ctrl-slider" min="16" max="30" value="20" oninput="this.nextElementSibling.textContent=this.value+'°C'">
+                <span class="sc-ctrl-val">20°C</span>
+              </div>
+              <div class="sc-ctrl-row">
+                <span class="sc-ctrl-ico">🔊</span>
+                <span class="sc-ctrl-name">Audio manos libres</span>
+                <input type="range" class="sc-ctrl-slider" min="0" max="100" value="50" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="sc-ctrl-val">50%</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /scenarios-stage -->
+    </div>
+  </section>
+
+  <!-- ===== CUATRO PILARES ===== -->
+  <section class="pillars-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Fundamentos</div>
+        <h2>Cuatro pilares.<br>Un hogar completo.</h2>
+      </div>
+      <div class="pillars-grid">
+
+        <div class="pillar-card reveal">
+          <div class="pillar-num">01</div>
+          <div class="pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+          </div>
+          <h3 data-editable="pillar-1-h3">Bienestar</h3>
+          <p data-editable="pillar-1-p">Luz circadiana que acompaña tu ritmo biológico. Ambientes que cuidan tu energía, salud y descanso todo el día.</p>
+          <ul class="pillar-list">
+            <li>Iluminación circadiana adaptable</li>
+            <li>Escenas de amanecer y atardecer</li>
+            <li>Temperatura de color dinámica</li>
+          </ul>
+        </div>
+
+        <div class="pillar-card reveal">
+          <div class="pillar-num">02</div>
+          <div class="pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <h3 data-editable="pillar-2-h3">Seguridad</h3>
+          <p data-editable="pillar-2-p">Control total del acceso. Cerraduras inteligentes, cámaras IP y videoporteros integrados en una sola plataforma.</p>
+          <ul class="pillar-list">
+            <li>Cerraduras Yale SmartCode</li>
+            <li>Videoportero 2N / DoorBird</li>
+            <li>Alertas en tiempo real</li>
+          </ul>
+        </div>
+
+        <div class="pillar-card reveal">
+          <div class="pillar-num">03</div>
+          <div class="pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <h3 data-editable="pillar-3-h3">Confort</h3>
+          <p data-editable="pillar-3-p">Temperatura ideal en cada zona, cortinas que siguen la luz del sol y la iluminación perfecta para cada momento.</p>
+          <ul class="pillar-list">
+            <li>Termostatos inteligentes por zona</li>
+            <li>Cortinas y persianas motorizadas</li>
+            <li>Escenas de ambiente personalizadas</li>
+          </ul>
+        </div>
+
+        <div class="pillar-card reveal">
+          <div class="pillar-num">04</div>
+          <div class="pillar-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+          <h3 data-editable="pillar-4-h3">Conveniencia</h3>
+          <p data-editable="pillar-4-p">Escenas automáticas, control por voz y una app intuitiva para gestionar todo desde cualquier lugar del mundo.</p>
+          <ul class="pillar-list">
+            <li>Escenas automáticas programables</li>
+            <li>Siri, Google Assistant, Alexa</li>
+            <li>App iOS y Android</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SOLUCIONES ===== -->
+  <section id="soluciones" class="solutions-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Soluciones</div>
+        <h2>Todo lo que tu hogar<br>puede llegar a ser.</h2>
+        <p class="section-subtitle">Ecosistema completo de automatización residencial, integrado en una única plataforma.</p>
+      </div>
+      <div class="solutions-grid">
+
+        <div class="solution-card reveal">
+          <div class="sol-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/></svg>
+          </div>
+          <h3>Iluminación</h3>
+          <p>Keypads Cameo y Horizon con dimmers inteligentes. Control de intensidad, temperatura de color y escenas.</p>
+          <div class="sol-tags"><span>Cameo</span><span>Horizon</span><span>Dimmers</span></div>
+          <div class="sol-hover-detail">
+            <ul>
+              <li>Regulación 0–100% por zona sin parpadeo</li>
+              <li>Temperatura de color dinámica 2700–6500K</li>
+              <li>Escenas personalizables por habitación</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-card reveal">
+          <div class="sol-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 010 7.07"/><path d="M19.07 4.93a10 10 0 010 14.14"/></svg>
+          </div>
+          <h3>Audio Multiroom</h3>
+          <p>Sistema DM NAX con hasta 8 zonas independientes. Apple Music, Spotify y más por cada ambiente.</p>
+          <div class="sol-tags"><span>DM NAX</span><span>8 Zonas</span><span>Streaming</span></div>
+          <div class="sol-hover-detail">
+            <ul>
+              <li>Hasta 8 zonas completamente independientes</li>
+              <li>Sincronización perfecta entre ambientes</li>
+              <li>Apple Music, Spotify, Tidal nativos</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-card reveal">
+          <div class="sol-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <h3>Video 4K</h3>
+          <p>Distribución de video 4K60 por red IP con DM NVX AV-over-IP. Ultra alta definición en cada pantalla.</p>
+          <div class="sol-tags"><span>DM NVX</span><span>4K60</span><span>AV-over-IP</span></div>
+          <div class="sol-hover-detail">
+            <ul>
+              <li>Distribución 4K60 por red Ethernet</li>
+              <li>Latencia ultra-baja (&lt;100ms)</li>
+              <li>Fuentes ilimitadas a pantallas ilimitadas</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-card reveal">
+          <div class="sol-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14.5 4h-5L7 7H4a2 2 0 00-2 2v9a2 2 0 002 2h16a2 2 0 002-2V9a2 2 0 00-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg>
+          </div>
+          <h3>Climatización</h3>
+          <p>Termostatos CHV inteligentes con control por zona. Temperatura perfecta en cada ambiente, automática.</p>
+          <div class="sol-tags"><span>CHV</span><span>Por zona</span><span>Fan Coil</span></div>
+          <div class="sol-hover-detail">
+            <ul>
+              <li>Control por zona independiente</li>
+              <li>Integración con splits, VRF y fan coil</li>
+              <li>Programación horaria automática</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-card reveal">
+          <div class="sol-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </div>
+          <h3>Cortinas Motorizadas</h3>
+          <p>Motores silenciosos con telas premium. Cortinas que se ajustan según la luz solar y tus preferencias.</p>
+          <div class="sol-tags"><span>Motorizado</span><span>RF</span><span>Automático</span></div>
+          <div class="sol-hover-detail">
+            <ul>
+              <li>Motor silencioso &lt;35dB</li>
+              <li>Seguimiento solar automático</li>
+              <li>Telas blackout, traslúcidas y screen</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="solution-card reveal">
+          <div class="sol-icon-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+          </div>
+          <h3>Seguridad & Acceso</h3>
+          <p>Cerraduras Yale, videoportero 2N/DoorBird y portones MyQ. Notificaciones instantáneas en la app.</p>
+          <div class="sol-tags"><span>Yale</span><span>2N/DoorBird</span><span>MyQ</span></div>
+          <div class="sol-hover-detail">
+            <ul>
+              <li>Control de acceso por código o huella</li>
+              <li>Video HD en la app en tiempo real</li>
+              <li>Alertas push instantáneas</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CATÁLOGO ===== -->
+  <section id="productos" class="catalog-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Catálogo Completo</div>
+        <h2>Productos Crestron Home.</h2>
+        <p class="section-subtitle">La línea completa de automatización residencial, certificada para Argentina.</p>
+        <a href="catalogo.html" class="btn-catalog-interactive reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><path d="M2 3h6a4 4 0 014 4v14a3 3 0 00-3-3H2z"/><path d="M22 3h-6a4 4 0 00-4 4v14a3 3 0 013-3h7z"/></svg>
+          Ver catálogo interactivo
+        </a>
+      </div>
+      <div class="catalog-filters reveal" id="catalogFilters">
+        <button class="filter-btn active" data-filter="all">Todos</button>
+        <button class="filter-btn" data-filter="procesadores">Procesadores</button>
+        <button class="filter-btn" data-filter="pantallas">Pantallas</button>
+        <button class="filter-btn" data-filter="keypads">Keypads</button>
+        <button class="filter-btn" data-filter="audio">Audio</button>
+        <button class="filter-btn" data-filter="speakers">Altavoces</button>
+        <button class="filter-btn" data-filter="video">Video</button>
+        <button class="filter-btn" data-filter="climatizacion">Climatización</button>
+        <button class="filter-btn" data-filter="shading">Shading</button>
+        <button class="filter-btn" data-filter="seguridad">Seguridad</button>
+        <button class="filter-btn" data-filter="networking">Networking</button>
+      </div>
+      <div class="products-count reveal">
+        <span id="productsCount">53</span> productos encontrados
+      </div>
+      <div class="products-grid" id="productsGrid"></div>
+    </div>
+  </section>
+
+  <!-- ===== MARCAS COMPATIBLES ===== -->
+  <section class="brands-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Ecosistema</div>
+        <h2>Marcas compatibles.</h2>
+        <p class="section-subtitle">Crestron Home se integra con los ecosistemas y dispositivos más importantes del mundo.</p>
+      </div>
+      <div class="brands-grid" id="brandsGrid">
+        <!-- Generado por admin.js — tooltips agregados desde JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== COMPARACIÓN ===== -->
+  <section class="comparison-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">La diferencia</div>
+        <h2>Crestron Home vs.<br>la automatización básica.</h2>
+        <p class="section-subtitle">No toda la automatización es igual. La diferencia está en los detalles que importan.</p>
+      </div>
+      <div class="comparison-grid reveal">
+        <div class="comparison-col crestron">
+          <div class="comparison-col-header">
+            <div class="comparison-col-icon">⚡</div>
+            <div>
+              <div class="comparison-col-title">Crestron Home</div>
+              <div class="comparison-col-sub">Plataforma profesional</div>
+            </div>
+          </div>
+          <div class="comparison-items">
+            <div class="comparison-item">
+              <div class="ci-bullet">✓</div>
+              <div class="ci-text"><strong>Integración total nativa</strong>Luces, clima, audio, video, seguridad y acceso en una única app sin puentes ni hubs adicionales.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✓</div>
+              <div class="ci-text"><strong>Sin suscripción mensual</strong>Pagás una sola vez. El sistema es tuyo para siempre, sin dependencia de servidores externos.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✓</div>
+              <div class="ci-text"><strong>Confiabilidad certificada</strong>50+ años de historia. Instalado en edificios corporativos, hoteles de lujo y residencias premium en 90 países.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✓</div>
+              <div class="ci-text"><strong>Personalización ilimitada</strong>Cada instalación se diseña a medida. Escenas, automatizaciones y flujos sin límites.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✓</div>
+              <div class="ci-text"><strong>Soporte de instalador certificado</strong>Red de integradores especializados en Argentina con soporte continuo.</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="comparison-divider"></div>
+
+        <div class="comparison-col basic">
+          <div class="comparison-col-header">
+            <div class="comparison-col-icon">📦</div>
+            <div>
+              <div class="comparison-col-title">Automatización básica</div>
+              <div class="comparison-col-sub">Soluciones de consumo masivo</div>
+            </div>
+          </div>
+          <div class="comparison-items">
+            <div class="comparison-item">
+              <div class="ci-bullet">✕</div>
+              <div class="ci-text">Ecosistemas fragmentados: una app para luces, otra para clima, otra para seguridad.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✕</div>
+              <div class="ci-text">Suscripciones mensuales o anuales para acceder a funciones premium o acceso remoto.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✕</div>
+              <div class="ci-text">Dependencia de servidores externos: si el fabricante cierra, el sistema deja de funcionar.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✕</div>
+              <div class="ci-text">Personalización limitada a las opciones predefinidas por el fabricante.</div>
+            </div>
+            <div class="comparison-item">
+              <div class="ci-bullet">✕</div>
+              <div class="ci-text">Soporte limitado a foros y manuales. Sin instalador especializado disponible localmente.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== POR QUÉ CRESTRON ===== -->
+  <section class="why-section">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">¿Por qué Crestron Home?</div>
+        <h2>La elección de quienes<br>no aceptan compromisos.</h2>
+      </div>
+      <div class="why-grid">
+        <div class="why-card reveal">
+          <div class="why-number" data-editable="why-1-num">50+</div>
+          <h3 data-editable="why-1-h3">Años liderando la automatización</h3>
+          <p data-editable="why-1-p">Desde 1971, Crestron define los estándares globales de la industria. Décadas de innovación sin concesiones.</p>
+        </div>
+        <div class="why-card featured reveal">
+          <div class="why-number" data-editable="why-2-num">$0</div>
+          <h3 data-editable="why-2-h3">Sin suscripciones mensuales</h3>
+          <p data-editable="why-2-p">Invertís una sola vez. El sistema es tuyo para siempre. Sin cuotas, sin sorpresas, sin dependencias de terceros.</p>
+        </div>
+        <div class="why-card reveal">
+          <div class="why-number" data-editable="why-3-num">1</div>
+          <h3 data-editable="why-3-h3">Una sola app para todo el hogar</h3>
+          <p data-editable="why-3-p">Crestron Home unifica iluminación, audio, video, clima, cortinas y seguridad en una única interfaz intuitiva.</p>
+        </div>
+      </div>
+      <div class="badges-strip reveal">
+        <div class="badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+          <span>Premio CEDIA al Mejor Sistema Residencial</span>
+        </div>
+        <div class="badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 014 10 15.3 15.3 0 01-4 10 15.3 15.3 0 01-4-10 15.3 15.3 0 014-10z"/></svg>
+          <span>Presente en más de 90 países</span>
+        </div>
+        <div class="badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+          <span>Compatible con iOS, Android y Apple Watch</span>
+        </div>
+        <div class="badge-item">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <span>Instaladores certificados en Argentina</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== VIDEO ===== -->
+  <section class="video-section" id="video">
+    <div class="container">
+      <div class="video-inner">
+        <div class="video-text reveal">
+          <div class="section-label">En acción</div>
+          <h2 data-editable="video-h2">Mirá cómo funciona<br>Crestron Home.</h2>
+          <p data-editable="video-p">Desde la app hasta los dispositivos físicos: descubrí cómo una vivienda completa se transforma con la plataforma más sofisticada del mercado.</p>
+          <button class="btn-set-video admin-only" id="btnSetVideo" style="display:none;">🎬 Cambiar video</button>
+        </div>
+        <div class="video-embed-wrap reveal" id="videoEmbedWrapper">
+          <div class="video-placeholder" id="videoPlaceholder">
+            <span class="vp-icon">▶️</span>
+            <span>El administrador puede agregar un video aquí</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== CONTACTO ===== -->
+  <!-- Foto de fondo: teclado Crestron Cameo de lujo en close-up, metal negro mate con retroiluminación teal -->
+  <section id="contacto" class="contact-section">
+    <div class="container">
+      <div class="contact-wrapper reveal">
+        <div class="contact-info">
+          <div class="section-label">Contacto</div>
+          <h2 data-editable="contact-h2">¿Listo para transformar<br>tu hogar?</h2>
+          <p data-editable="contact-p">Consultá con nuestros especialistas. Diseñamos la solución perfecta para tu proyecto, desde una habitación hasta el hogar completo.</p>
+          <div class="contact-items">
+            <a href="mailto:comercial@soundtec.com.ar" class="ci">
+              <div class="ci-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <span>comercial@soundtec.com.ar</span>
+            </a>
+            <a href="tel:+541145860400" class="ci">
+              <div class="ci-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 12a19.79 19.79 0 01-3.07-8.67A2 2 0 012 1.18h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z"/></svg>
+              </div>
+              <span>+54 11 4586-0400</span>
+            </a>
+            <div class="ci">
+              <div class="ci-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <span>Av. Donato Álvarez 1526, CABA</span>
+            </div>
+          </div>
+        </div>
+        <div class="contact-form-side">
+          <form class="contact-form" id="contactForm" novalidate>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="nombre">Nombre completo</label>
+                <input type="text" id="nombre" name="nombre" placeholder="Tu nombre" autocomplete="name">
+              </div>
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="tu@email.com" autocomplete="email">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono" placeholder="+54 11 xxxx-xxxx">
+              </div>
+              <div class="form-group">
+                <label for="proyecto">Tipo de proyecto</label>
+                <select id="proyecto" name="proyecto">
+                  <option value="">Seleccioná una opción</option>
+                  <option>Casa nueva</option>
+                  <option>Remodelación</option>
+                  <option>Actualización de sistema</option>
+                  <option>Departamento</option>
+                  <option>Otro</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group full">
+              <label for="mensaje">Contanos sobre tu proyecto</label>
+              <textarea id="mensaje" name="mensaje" rows="4" placeholder="¿Cuántos ambientes? ¿Fecha estimada?"></textarea>
+            </div>
+            <button type="submit" class="btn-submit">
+              <span>Enviar consulta</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+            </button>
+            <p class="form-disclaimer">Tu información es confidencial y solo será usada para contactarte.</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== RECURSOS PREVIEW ===== -->
+  <section class="resources-section" id="recursos">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Recursos</div>
+        <h2>Material de marketing<br>y descarga.</h2>
+        <p class="section-subtitle">Brochures, videos, flyers e imágenes para profesionales y distribuidores.</p>
+      </div>
+      <div class="resources-grid" id="resourcesPreviewGrid"></div>
+      <div style="text-align:center;margin-top:40px;">
+        <a href="recursos.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;">
+          Ver todos los recursos
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== BLOG PREVIEW ===== -->
+  <section class="blog-section" id="blog">
+    <div class="container">
+      <div class="section-header reveal">
+        <div class="section-label">Blog</div>
+        <h2>Novedades y tendencias<br>en automatización.</h2>
+        <p class="section-subtitle">Artículos sobre tecnología, domótica y la plataforma Crestron Home.</p>
+      </div>
+      <div class="blog-grid" id="blogGrid"></div>
+      <div style="text-align:center;margin-top:48px;">
+        <a href="blog.html" class="btn-primary" style="display:inline-flex;align-items:center;gap:8px;">
+          Ver todas las notas
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FOOTER ===== -->
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="footer-logo">
+            <img src="crestron-home-logo.svg" alt="Crestron Home" class="footer-logo-img">
+          </div>
+          <p>La plataforma de automatización residencial más confiable del mundo, disponible en Argentina a través de su distribuidor oficial.</p>
+          <div class="footer-links-ext">
+            <a href="https://www.soundtec.com.ar" target="_blank" rel="noopener noreferrer">soundtec.com.ar ↗</a>
+            <a href="https://www.crestron.com" target="_blank" rel="noopener noreferrer">crestron.com ↗</a>
+          </div>
+        </div>
+        <div class="footer-col">
+          <h4>Soluciones</h4>
+          <ul>
+            <li><a href="#soluciones">Iluminación</a></li>
+            <li><a href="#soluciones">Audio Multiroom</a></li>
+            <li><a href="#soluciones">Video 4K</a></li>
+            <li><a href="#soluciones">Climatización</a></li>
+            <li><a href="#soluciones">Cortinas</a></li>
+            <li><a href="#soluciones">Seguridad</a></li>
+          </ul>
+        </div>
+        <div class="footer-col">
+          <h4>Productos</h4>
+          <ul>
+            <li><a href="#productos">Procesadores</a></li>
+            <li><a href="#productos">Touch Screens</a></li>
+            <li><a href="#productos">Keypads</a></li>
+            <li><a href="#productos">Audio</a></li>
+            <li><a href="#productos">Video</a></li>
+            <li><a href="#productos">Networking</a></li>
+          </ul>
+        </div>
+        <div class="footer-col footer-contact-col">
+          <h4>Distribuidor Oficial</h4>
+          <p class="dist-name">SOUNDTEC SRL</p>
+          <a href="mailto:comercial@soundtec.com.ar">comercial@soundtec.com.ar</a>
+          <a href="tel:+541145860400">+54 11 4586-0400</a>
+          <p class="dist-addr">Av. Donato Álvarez 1526<br>Ciudad de Buenos Aires, Argentina</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2024 Crestron Electronics, Inc. Todos los derechos reservados.</p>
+        <p>Distribuidor oficial en Argentina: <strong>Soundtec SRL</strong></p>
+      </div>
+    </div>
+  </footer>
+
+  <script src="script.js"></script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="appdemo.js"></script>
+  <script src="recursos.js"></script>
+
+  <!-- Scene switching for scenarios section -->
+  <script>
+    function switchScene(key) {
+      document.querySelectorAll('.scenario-panel').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.scenario-tab').forEach(t => t.classList.remove('active'));
+      const panel = document.getElementById('scene-' + key);
+      if (panel) panel.classList.add('active');
+      document.querySelector('.scenario-tab[data-scene="' + key + '"]')?.classList.add('active');
+    }
+
+    /* Hero dashboard strip scene selector */
+    function heroScene(btn, name) {
+      document.querySelectorAll('.hds-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      /* Mirror to app demo if loaded */
+      const SCENE_MAP = { 'Noche': 0, 'Cine': 1, 'Amanecer': 2, 'Reunión': 3 };
+      if (typeof AppDemo !== 'undefined' && SCENE_MAP[name] !== undefined) {
+        AppDemo.setScene(SCENE_MAP[name]);
+      }
+    }
+  </script>
+</body>
+</html>

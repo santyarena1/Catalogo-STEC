@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recursos | Crestron Home Argentina</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <div class="cursor-dot" id="cursorDot"></div>
+  <div class="cursor-outline" id="cursorOutline"></div>
+
+  <!-- ===== HERO ===== -->
+  <div class="rec-page-hero">
+    <a href="index.html" class="rec-back">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver al inicio
+    </a>
+    <div class="container">
+      <div class="section-label" style="color:rgba(0,157,199,0.9);margin-bottom:16px;">Recursos</div>
+      <h1>Material de marketing<br>y descarga.</h1>
+      <p>Brochures, videos, flyers, imágenes y más para profesionales.</p>
+    </div>
+  </div>
+
+  <!-- ===== CONTENT ===== -->
+  <div class="rec-page-body">
+    <div class="container">
+      <div class="rec-filter-bar">
+        <input type="search" id="recSearch" placeholder="Buscar recursos...">
+        <button class="rec-type-btn active" data-type="all">Todos</button>
+        <button class="rec-type-btn" data-type="brochure">Brochures</button>
+        <button class="rec-type-btn" data-type="video">Videos</button>
+        <button class="rec-type-btn" data-type="image">Imágenes</button>
+        <button class="rec-type-btn" data-type="flyer">Folletos</button>
+        <button class="rec-type-btn" data-type="other">Otros</button>
+      </div>
+      <div class="rec-full-grid" id="recFullGrid"></div>
+    </div>
+  </div>
+
+  <!-- Add resource modal (admin only) -->
+  <div class="rec-modal-overlay" id="recModalOverlay">
+    <div class="rec-modal">
+      <button class="rec-modal-close" id="recModalClose">✕</button>
+      <h3>Agregar recurso</h3>
+      <div class="rec-field">
+        <label>Título</label>
+        <input type="text" id="recTitle" placeholder="Nombre del recurso">
+      </div>
+      <div class="rec-field">
+        <label>Tipo</label>
+        <select id="recType">
+          <option value="brochure">Brochure</option>
+          <option value="video">Video</option>
+          <option value="image">Imagen</option>
+          <option value="flyer">Folleto</option>
+          <option value="other">Otro</option>
+        </select>
+      </div>
+      <div class="rec-field">
+        <label>Descripción (opcional)</label>
+        <textarea id="recDesc" rows="2" placeholder="Breve descripción..."></textarea>
+      </div>
+      <div class="rec-field">
+        <label>URL o archivo</label>
+        <input type="url" id="recUrl" placeholder="https://...">
+        <button type="button" id="recFilePick" style="margin-top:8px;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border-med);background:#fff;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);">📎 Subir archivo</button>
+        <input type="file" id="recFileInput" style="display:none;">
+      </div>
+      <div class="rec-field">
+        <label>Imagen de portada (opcional)</label>
+        <input type="url" id="recThumb" placeholder="URL de imagen de portada">
+        <button type="button" id="recThumbPick" style="margin-top:8px;padding:8px 14px;border-radius:8px;border:1.5px solid var(--border-med);background:#fff;cursor:pointer;font-size:13px;font-weight:600;font-family:var(--font);">🖼️ Elegir imagen</button>
+        <div id="recThumbPreview" style="margin-top:8px;"></div>
+      </div>
+      <button id="recSaveBtn" style="width:100%;padding:12px;border-radius:10px;border:none;background:var(--accent);color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:var(--font);">Guardar recurso</button>
+    </div>
+  </div>
+
+  <script src="config.js"></script>
+  <script src="script.js"></script>
+  <script src="admin.js"></script>
+  <script src="recursos.js"></script>
+</body>
+</html>
