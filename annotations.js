@@ -15,6 +15,8 @@ const Annotations = (() => {
   let checklistOverlay = null;
   let listFilter       = 'all';
   let dragState        = null;
+  let syncTimer        = null;
+  let syncIndicator    = null;
 
   /* ────────────────────────────────────────────────────────────
      AUTH
@@ -26,13 +28,63 @@ const Annotations = (() => {
   }
 
   /* ────────────────────────────────────────────────────────────
-     STORAGE
+     JSONBIN REMOTE SYNC
+  ──────────────────────────────────────────────────────────── */
+  function binCfg() {
+    const c = (typeof APP_CONFIG !== 'undefined' ? APP_CONFIG : null) ||
+              (typeof window.APP_CONFIG !== 'undefined' ? window.APP_CONFIG : {});
+    return { id: c.JSONBIN_ID || '', key: c.JSONBIN_KEY || '' };
+  }
+
+  function binUrl()    { return 'https://api.jsonbin.io/v3/b/' + binCfg().id; }
+  function binEnabled(){ const b = binCfg(); return !!(b.id && b.key); }
+
+  async function remotePull() {
+    if (!binEnabled()) return null;
+    try {
+      const res = await fetch(binUrl() + '/latest', {
+        headers: { 'X-Master-Key': binCfg().key }
+      });
+      if (!res.ok) return null;
+      const data = await res.json();
+      return Array.isArray(data.record) ? data.record : null;
+    } catch { return null; }
+  }
+
+  function remotePush(anns) {
+    if (!binEnabled()) return;
+    clearTimeout(syncTimer);
+    setSyncStatus('syncing');
+    syncTimer = setTimeout(async () => {
+      try {
+        const res = await fetch(binUrl(), {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json', 'X-Master-Key': binCfg().key },
+          body: JSON.stringify(anns),
+        });
+        setSyncStatus(res.ok ? 'ok' : 'error');
+      } catch { setSyncStatus('error'); }
+    }, 700);
+  }
+
+  function setSyncStatus(state) {
+    if (!syncIndicator) return;
+    const labels = { syncing: '↻ Sincronizando...', ok: '✓ Guardado en la nube', error: '⚠ Error al sincronizar' };
+    const colors = { syncing: '#009DC7', ok: '#22c55e', error: '#f97316' };
+    syncIndicator.textContent = labels[state] || '';
+    syncIndicator.style.color = colors[state] || '';
+    if (state === 'ok') setTimeout(() => { if (syncIndicator) syncIndicator.textContent = ''; }, 3000);
+  }
+
+  /* ────────────────────────────────────────────────────────────
+     STORAGE  (localStorage = cache rápido, JSONBin = fuente real)
   ──────────────────────────────────────────────────────────── */
   function loadAll() {
     try { return JSON.parse(localStorage.getItem(STORE)) || []; } catch { return []; }
   }
   function saveAll(anns) {
     localStorage.setItem(STORE, JSON.stringify(anns));
+    remotePush(anns);
   }
 
   /* ────────────────────────────────────────────────────────────
@@ -274,8 +326,10 @@ const Annotations = (() => {
         'Notas ',
         '<span class="ann-badge" id="annBadge">0</span>',
       '</button>',
+      '<span id="annSyncStatus" style="font-size:10px;font-weight:600;padding:0 4px;transition:color .3s;"></span>',
     ].join('');
     document.body.appendChild(fabWrap);
+    syncIndicator = document.getElementById('annSyncStatus');
     document.getElementById('annFabOpen').addEventListener('click', openChecklist);
   }
 
@@ -512,6 +566,33 @@ const Annotations = (() => {
   }
 
   /* ────────────────────────────────────────────────────────────
+     PULL REMOTO Y SINCRONIZAR
+  ──────────────────────────────────────────────────────────── */
+  async function pullAndSync() {
+    if (!binEnabled()) return;
+    setSyncStatus('syncing');
+    const remote = await remotePull();
+    if (!remote) { setSyncStatus('error'); return; }
+
+    const local    = loadAll();
+    const localIds = new Set(local.map(a => a.id));
+    const remIds   = new Set(remote.map(a => a.id));
+
+    /* Merge: keep all notes from both sides, remote wins on conflicts */
+    const merged = [...remote];
+    local.forEach(a => { if (!remIds.has(a.id)) merged.push(a); });
+
+    const changed = JSON.stringify(merged) !== JSON.stringify(local);
+    if (changed) {
+      localStorage.setItem(STORE, JSON.stringify(merged));
+      renderNotesForPage();
+      updateFabCount();
+      renderChecklist();
+    }
+    setSyncStatus('ok');
+  }
+
+  /* ────────────────────────────────────────────────────────────
      INIT
   ──────────────────────────────────────────────────────────── */
   function init() {
@@ -532,6 +613,7 @@ const Annotations = (() => {
       setTimeout(addToolbarButton, 150);
       renderNotesForPage();
       updateFabCount();
+      pullAndSync();
     });
 
     document.addEventListener('crestron:auth:logout', () => {
@@ -548,6 +630,7 @@ const Annotations = (() => {
       setTimeout(addToolbarButton, 150);
       renderNotesForPage();
       updateFabCount();
+      pullAndSync();
     }
 
     /* Handle direct link to a note: URL hash #goto_ann_XXXXX */
