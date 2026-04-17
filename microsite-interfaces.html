@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — Pantallas Táctiles &amp; Controles</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── Touch Screen Device ── */
+.ts-device-wrap {
+  display:flex; flex-direction:column; align-items:center; gap:0; user-select:none;
+}
+.ts-device {
+  width:280px; background:#111418;
+  border-radius:20px; overflow:hidden;
+  box-shadow:0 32px 80px rgba(0,0,0,.8);
+  border:1px solid rgba(255,255,255,.08);
+  position:relative;
+}
+.ts-status-bar {
+  height:32px; background:#0d1117;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:0 16px; font-size:.62rem; color:rgba(232,237,243,.4);
+  border-bottom:1px solid rgba(255,255,255,.05);
+}
+.ts-screen {
+  padding:0; min-height:200px; position:relative; overflow:hidden;
+}
+.ts-panel {
+  display:none; padding:16px; animation:fadePanel .25s ease;
+}
+.ts-panel.active { display:block; }
+@keyframes fadePanel { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+
+/* ── Panel content ── */
+.ts-panel-title { font-size:.72rem; font-weight:700; letter-spacing:.14em; text-transform:uppercase; color:var(--ms-accent); margin-bottom:14px; }
+.ts-control-row { display:flex; align-items:center; justify-content:space-between; padding:10px 0; border-bottom:1px solid rgba(255,255,255,.05); }
+.ts-control-row:last-child { border-bottom:none; }
+.ts-ctrl-label { font-size:.74rem; color:rgba(232,237,243,.7); display:flex; align-items:center; gap:8px; }
+.ts-toggle {
+  width:38px; height:20px; border-radius:10px; background:rgba(255,255,255,.1);
+  position:relative; cursor:pointer; transition:background .22s; flex-shrink:0;
+}
+.ts-toggle.on { background:var(--ms-accent); }
+.ts-toggle::after {
+  content:''; position:absolute;
+  width:16px; height:16px; border-radius:50%;
+  background:#fff; top:2px; left:2px;
+  transition:left .22s;
+}
+.ts-toggle.on::after { left:20px; }
+.ts-mini-slider {
+  -webkit-appearance:none; height:3px; border-radius:2px;
+  background:rgba(255,255,255,.1); outline:none; cursor:pointer; width:80px;
+}
+.ts-mini-slider::-webkit-slider-thumb {
+  -webkit-appearance:none; width:12px; height:12px; border-radius:50%;
+  background:var(--ms-accent); cursor:pointer;
+}
+.ts-mini-val { font-size:.7rem; color:var(--ms-accent); min-width:28px; text-align:right; }
+
+/* ── Bottom nav of device ── */
+.ts-nav-bar {
+  display:flex; background:#0a0f15; border-top:1px solid rgba(255,255,255,.06);
+}
+.ts-nav-btn {
+  flex:1; padding:12px 4px; border:none; background:transparent;
+  font-size:.58rem; color:rgba(232,237,243,.35);
+  cursor:pointer; transition:color .2s; text-align:center;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+}
+.ts-nav-btn .ts-nav-ico { font-size:1rem; }
+.ts-nav-btn.active { color:var(--ms-accent); }
+.ts-nav-btn:hover { color:var(--ms-text2); }
+
+/* ── Device stand ── */
+.ts-stand {
+  width:60px; height:16px;
+  background:linear-gradient(180deg,#1a1e24,#0f1216);
+  border-radius:0 0 6px 6px;
+}
+.ts-base {
+  width:100px; height:6px;
+  background:#0d1015; border-radius:4px;
+  margin-top:-1px;
+}
+
+/* ── Remote ── */
+.remote-device {
+  width:80px; background:#131820;
+  border-radius:24px; padding:20px 12px;
+  box-shadow:0 24px 60px rgba(0,0,0,.7);
+  border:1px solid rgba(255,255,255,.06);
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+}
+.remote-btn {
+  width:42px; height:42px; border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);
+  background:rgba(255,255,255,.04);
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; color:var(--ms-text2);
+}
+.remote-btn:hover { background:var(--ms-accent-dim); border-color:var(--ms-accent); color:var(--ms-accent); }
+.remote-btn.remote-center {
+  width:52px; height:52px; background:var(--ms-accent);
+  border-color:var(--ms-accent); color:#fff; font-size:1rem;
+}
+.remote-btn.remote-center:hover { background:var(--ms-accent2); }
+.remote-nav { display:grid; grid-template-columns:1fr 1fr 1fr; gap:4px; }
+.remote-nav-btn {
+  width:100%; aspect-ratio:1; border-radius:8px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:center;
+  font-size:.8rem; color:var(--ms-text2);
+}
+.remote-nav-btn:hover { background:var(--ms-accent-dim); border-color:var(--ms-accent); }
+.remote-label { font-size:.52rem; color:rgba(255,255,255,.2); letter-spacing:.06em; text-transform:uppercase; text-align:center; margin-top:4px; }
+
+/* ── Product tabs ── */
+.ts-panels-wrap { position:relative; }
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">Pantallas &amp; Controles</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 70% 55% at 65% 45%,rgba(0,157,199,.09),transparent),linear-gradient(160deg,#080f18 50%,#08111c);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · Pantallas Táctiles &amp; Controles</div>
+    <h1 class="ms-hero-title">Todo el hogar<br>en la palma<br><strong>de tu mano</strong>.</h1>
+    <p class="ms-hero-sub">Pantallas táctiles de alta resolución, controles remotos ergonómicos y la interfaz unificada del Crestron Home OS en cada dispositivo. Una sola experiencia, en cualquier forma.</p>
+    <a href="#demo-pantalla" class="ms-hero-cta">Ver la interfaz en vivo</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: pantalla táctil 80 Series montada en pared · cocina moderna · interfaz de Crestron Home OS -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">📱</div>
+        <span>Pantalla 80 Series · pared de cocina moderna · interfaz Crestron Home OS · modo oscuro</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Pantallas y controles</div>
+    <h2 class="ms-sh-title">La interfaz que <strong>no necesita</strong> manual.</h2>
+    <p class="ms-sh-sub">El Crestron Home OS es el mismo en todos los dispositivos. Aprendés uno y sabés usar todos.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">✨</div>
+      <div class="ms-card-title">Alta resolución</div>
+      <div class="ms-card-text">Pantallas HDMI nítidas con respuesta táctil precisa. La imagen es tan buena que se ve como una obra de arte en la pared.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🏗️</div>
+      <div class="ms-card-title">Enrasado o de mesa</div>
+      <div class="ms-card-text">Montaje flush en la pared o sobre la mesada. Ambas opciones con el mismo acabado premium y el mismo sistema operativo.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🎙️</div>
+      <div class="ms-card-title">Micrófono integrado</div>
+      <div class="ms-card-text">Control por voz y función de intercomunicador entre habitaciones desde la misma pantalla. Sin hardware adicional.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🔄</div>
+      <div class="ms-card-title">OS unificado</div>
+      <div class="ms-card-text">La misma interfaz en pantallas, remotes y app móvil. El usuario nunca se desorientan, sin importar desde dónde controla.</div>
+    </div>
+  </div>
+</section>
+
+<!-- INTERACTIVE DEMO -->
+<div class="ms-section-dark">
+<section class="ms-section" id="demo-pantalla">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Demo interactivo · Crestron Home OS</div>
+    <h2 class="ms-sh-title">Tocá los íconos para <strong>navegar los paneles</strong>.</h2>
+    <p class="ms-sh-sub">Así se ve el sistema real. La misma fluidez, la misma lógica, en cada dispositivo Crestron.</p>
+  </div>
+
+  <div class="ms-grid-2" style="align-items:center; gap:56px;">
+    <!-- Touch Screen -->
+    <div style="display:flex;flex-direction:column;align-items:center;" class="ms-reveal">
+      <div class="ms-config-label" style="margin-bottom:16px;text-align:center;">Pantalla 80 Series · Montaje en pared</div>
+      <div class="ts-device-wrap">
+        <div class="ts-device" id="ts-device">
+          <div class="ts-status-bar">
+            <span>14:32</span>
+            <span>Crestron Home</span>
+            <span>22°C · ☁️</span>
+          </div>
+          <div class="ts-screen">
+            <!-- Luces panel -->
+            <div class="ts-panel active" id="tsp-luces">
+              <div class="ts-panel-title">💡 Iluminación</div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🛋️ Living</span>
+                <input class="ts-mini-slider" type="range" min="0" max="100" value="80" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="ts-mini-val">80%</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🍳 Cocina</span>
+                <input class="ts-mini-slider" type="range" min="0" max="100" value="60" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="ts-mini-val">60%</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🛏️ Dormitorio</span>
+                <input class="ts-mini-slider" type="range" min="0" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="ts-mini-val">0%</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🌿 Terraza</span>
+                <div class="ts-toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+            <!-- Persianas panel -->
+            <div class="ts-panel" id="tsp-persianas">
+              <div class="ts-panel-title">🪟 Persianas</div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🛋️ Living</span>
+                <input class="ts-mini-slider" type="range" min="0" max="100" value="45" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="ts-mini-val">45%</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🛏️ Dormitorio</span>
+                <input class="ts-mini-slider" type="range" min="0" max="100" value="100" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="ts-mini-val">100%</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🏢 Oficina</span>
+                <input class="ts-mini-slider" type="range" min="0" max="100" value="0" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="ts-mini-val">0%</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">Todas</span>
+                <div style="display:flex;gap:6px;">
+                  <button onclick="setAllShades(0)" style="padding:4px 8px;border-radius:4px;border:1px solid var(--ms-border);background:transparent;color:var(--ms-text3);font-size:.65rem;cursor:pointer;">↑ Subir</button>
+                  <button onclick="setAllShades(100)" style="padding:4px 8px;border-radius:4px;border:1px solid var(--ms-border);background:transparent;color:var(--ms-text3);font-size:.65rem;cursor:pointer;">↓ Bajar</button>
+                </div>
+              </div>
+            </div>
+            <!-- Audio panel -->
+            <div class="ts-panel" id="tsp-audio">
+              <div class="ts-panel-title">🔊 Audio</div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🎵 Living</span>
+                <input class="ts-mini-slider" type="range" min="0" max="100" value="65" oninput="this.nextElementSibling.textContent=this.value+'%'">
+                <span class="ts-mini-val">65%</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🎶 Cocina</span>
+                <div class="ts-toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">Fuente</span>
+                <span style="font-size:.7rem;color:var(--ms-accent);">Spotify</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label" style="flex:1;"></span>
+                <div style="display:flex;gap:8px;">
+                  <button style="background:transparent;border:none;color:var(--ms-text2);font-size:.9rem;cursor:pointer;">⏮</button>
+                  <button style="background:var(--ms-accent);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;">⏸</button>
+                  <button style="background:transparent;border:none;color:var(--ms-text2);font-size:.9rem;cursor:pointer;">⏭</button>
+                </div>
+              </div>
+            </div>
+            <!-- Clima panel -->
+            <div class="ts-panel" id="tsp-clima">
+              <div class="ts-panel-title">🌡️ Clima</div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">Temperatura</span>
+                <span style="font-size:1rem;font-weight:600;color:var(--ms-text);" id="ts-temp-disp">22°C</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">Objetivo</span>
+                <input class="ts-mini-slider" type="range" min="16" max="30" value="20" oninput="document.getElementById('ts-setpt').textContent=this.value+'°C'">
+                <span class="ts-mini-val" id="ts-setpt">20°C</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">Modo</span>
+                <span style="font-size:.72rem;color:var(--ms-accent);">❄️ Enfriando</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">Humedad</span>
+                <span style="font-size:.72rem;color:var(--ms-text3);">55%</span>
+              </div>
+            </div>
+            <!-- Seguridad panel -->
+            <div class="ts-panel" id="tsp-seguridad">
+              <div class="ts-panel-title">🔐 Seguridad</div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🚪 Puerta principal</span>
+                <span style="font-size:.72rem;font-weight:600;color:rgba(255,120,120,.8);">BLOQUEADA</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🚗 Garaje</span>
+                <div class="ts-toggle on" onclick="this.classList.toggle('on')"></div>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">📹 Cámara</span>
+                <span style="font-size:.72rem;color:#00e5a0;">● Activa</span>
+              </div>
+              <div class="ts-control-row">
+                <span class="ts-ctrl-label">🔔 Alarma</span>
+                <div class="ts-toggle" onclick="this.classList.toggle('on')"></div>
+              </div>
+            </div>
+          </div>
+          <div class="ts-nav-bar">
+            <button class="ts-nav-btn active" id="tnb-luces" onclick="switchPanel('luces',this)">
+              <span class="ts-nav-ico">💡</span>Luces
+            </button>
+            <button class="ts-nav-btn" id="tnb-persianas" onclick="switchPanel('persianas',this)">
+              <span class="ts-nav-ico">🪟</span>Persianas
+            </button>
+            <button class="ts-nav-btn" id="tnb-audio" onclick="switchPanel('audio',this)">
+              <span class="ts-nav-ico">🔊</span>Audio
+            </button>
+            <button class="ts-nav-btn" id="tnb-clima" onclick="switchPanel('clima',this)">
+              <span class="ts-nav-ico">🌡️</span>Clima
+            </button>
+            <button class="ts-nav-btn" id="tnb-seguridad" onclick="switchPanel('seguridad',this)">
+              <span class="ts-nav-ico">🔐</span>Accesos
+            </button>
+          </div>
+        </div>
+        <div class="ts-stand"></div>
+        <div class="ts-base"></div>
+      </div>
+    </div>
+
+    <!-- Remote + info -->
+    <div class="ms-reveal">
+      <div class="ms-grid-2" style="gap:24px; align-items:start; margin-bottom:32px;">
+        <div style="display:flex;flex-direction:column;align-items:center;">
+          <div class="ms-config-label" style="margin-bottom:12px;text-align:center;">Control remoto</div>
+          <div class="remote-device">
+            <div class="remote-label">CRESTRON</div>
+            <div class="remote-nav">
+              <div></div>
+              <div class="remote-nav-btn" onclick="flashBtn(this)">▲</div>
+              <div></div>
+              <div class="remote-nav-btn" onclick="flashBtn(this)">◀</div>
+              <div class="remote-nav-btn" style="background:var(--ms-accent);border-color:var(--ms-accent);color:#fff;" onclick="flashBtn(this)">OK</div>
+              <div class="remote-nav-btn" onclick="flashBtn(this)">▶</div>
+              <div></div>
+              <div class="remote-nav-btn" onclick="flashBtn(this)">▼</div>
+              <div></div>
+            </div>
+            <div style="display:flex;gap:8px;margin-top:4px;">
+              <div class="remote-nav-btn" style="width:100%;border-radius:6px;font-size:.65rem;flex:1;" onclick="flashBtn(this)">🏠</div>
+              <div class="remote-nav-btn" style="width:100%;border-radius:6px;font-size:.65rem;flex:1;" onclick="flashBtn(this)">⬅</div>
+            </div>
+            <div style="height:1px;background:rgba(255,255,255,.05);width:100%;"></div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;width:100%;">
+              <button class="remote-btn" style="width:100%;height:28px;border-radius:6px;font-size:.6rem;" onclick="flashBtn(this)">💡</button>
+              <button class="remote-btn" style="width:100%;height:28px;border-radius:6px;font-size:.6rem;" onclick="flashBtn(this)">🪟</button>
+              <button class="remote-btn" style="width:100%;height:28px;border-radius:6px;font-size:.6rem;" onclick="flashBtn(this)">🔊</button>
+              <button class="remote-btn" style="width:100%;height:28px;border-radius:6px;font-size:.6rem;" onclick="flashBtn(this)">🌡️</button>
+            </div>
+            <div class="remote-label" style="margin-top:4px;">HR-310</div>
+          </div>
+        </div>
+        <div>
+          <div class="ms-config-label">Crestron Home OS</div>
+          <div class="ms-config-title" style="font-size:1.1rem;">Una sola interfaz.<br>Todos los dispositivos.</div>
+          <div class="ms-divider"></div>
+          <ul style="list-style:none;padding:0;font-size:.8rem;color:var(--ms-text2);line-height:2.2;">
+            <li>✓ App móvil iOS y Android</li>
+            <li>✓ Pantallas táctiles 80 Series</li>
+            <li>✓ Control remoto HR-310</li>
+            <li>✓ Keypads Horizon y Cameo</li>
+            <li>✓ Amazon Alexa / Apple Siri</li>
+            <li>✓ Google Home</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="padding:24px;background:var(--ms-accent-dim);border:1px solid var(--ms-border2);border-radius:var(--ms-radius);">
+        <div class="ms-config-label" style="margin-bottom:8px;">Escenas rápidas desde la pantalla</div>
+        <div class="ms-scenes" style="margin:0;">
+          <button class="ms-scene-btn" onclick="this.classList.toggle('active')">🌙 Noche</button>
+          <button class="ms-scene-btn" onclick="this.classList.toggle('active')">🎬 Cine</button>
+          <button class="ms-scene-btn" onclick="this.classList.toggle('active')">🌅 Amanecer</button>
+          <button class="ms-scene-btn" onclick="this.classList.toggle('active')">💼 Reunión</button>
+          <button class="ms-scene-btn" onclick="this.classList.toggle('active')">🎉 Fiesta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- PRODUCT LINE -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Línea de productos</div>
+    <h2 class="ms-sh-title">El dispositivo correcto<br>para <strong>cada lugar</strong>.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:20px;">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🖥️</div>
+      <div class="ms-card-title">80 Series Touch Screen</div>
+      <div class="ms-card-text">Pantalla táctil de alta resolución con montaje enrasado. Micrófono, altavoz y cámara integrados. Ideal para halls, cocinas y salones.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📱</div>
+      <div class="ms-card-title">App Crestron Home</div>
+      <div class="ms-card-text">Control completo desde smartphone o tablet. iOS y Android. La misma interfaz que la pantalla fija, siempre en tu bolsillo.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🎮</div>
+      <div class="ms-card-title">Remote HR-310</div>
+      <div class="ms-card-text">Control remoto ergonómico con botones retroiluminados. Diseñado para el sofá. Respuesta háptica y duración de batería excepcional.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<div class="ms-section-dark">
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Galería</div>
+    <h2 class="ms-sh-title">Control que se <strong>integra</strong> al espacio.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏠</div><span>Pantalla 80 Series · entrada de hogar · usuario navegando escenas · modo oscuro</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🛋️</div><span>Remote HR-310 · persona en sofá · control de cine en casa · luces atenuadas</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">📲</div><span>App Crestron Home · iPhone · panel de escenas · mano controlando iluminación</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ECOSYSTEM -->
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">Integración total</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">Un sistema. <strong>Infinitas formas</strong> de controlarlo.</h2>
+  <p class="ms-sh-sub">Pantalla táctil, remote, app o voz. Elegís cómo interactuar. El resultado siempre es el mismo: el hogar responde.</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Pantallas 80 Series</span>
+    <span class="ms-chip current">Remote HR-310</span>
+    <span class="ms-chip">Keypads Horizon/Cameo</span>
+    <span class="ms-chip">Iluminación Zūm</span>
+    <span class="ms-chip">Persianas</span>
+    <span class="ms-chip">Audio DM NAX</span>
+    <span class="ms-chip">Clima</span>
+    <span class="ms-chip">Seguridad</span>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">Interfaces · Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">El control perfecto<br>comienza con el <strong>dispositivo correcto</strong>.</h2>
+    <p class="ms-cta-sub">Un integrador certificado te ayuda a elegir la combinación ideal de pantallas, remotes y keypads para cada espacio.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Diseñar mi sistema de control →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: mano tocando pantalla 80 Series, interfaz de escenas visible, iluminación perfecta al fondo -->
+      <div class="ms-img-ph" style="height:260px;border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🤲</div>
+        <span>Mano activando escena en pantalla 80 Series · el hogar respondiendo en segundo plano · fotoplano picado</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3);text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+function switchPanel(name, btn) {
+  document.querySelectorAll('.ts-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ts-nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById('tsp-' + name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function setAllShades(val) {
+  document.querySelectorAll('#tsp-persianas .ts-mini-slider').forEach(s => {
+    s.value = val;
+    s.nextElementSibling.textContent = val + '%';
+  });
+}
+
+function flashBtn(el) {
+  const orig = el.style.background;
+  el.style.background = 'rgba(0,157,199,.35)';
+  setTimeout(() => el.style.background = orig, 200);
+}
+
+const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.12});
+document.querySelectorAll('.ms-reveal').forEach(el => obs.observe(el));
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>

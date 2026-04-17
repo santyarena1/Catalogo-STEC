@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — Shading</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── Shade Window Simulator ── */
+.window-scene {
+  width:100%; aspect-ratio:4/3;
+  position:relative; border-radius:var(--ms-radius-lg);
+  border:1px solid var(--ms-border);
+  overflow:hidden; background:#0a1520;
+}
+.window-sky {
+  position:absolute; inset:0;
+  background:linear-gradient(180deg,#0a1a3a 0%,#1a3a6e 40%,#c87941 70%,#e8a855 100%);
+  transition:opacity .4s;
+}
+.window-floor { position:absolute; bottom:0; left:0; right:0; height:30%; background:#161b22; }
+.window-frame {
+  position:absolute; inset:10%; border:8px solid #2a2a2a;
+  border-radius:4px; overflow:hidden;
+}
+.shade-track {
+  position:absolute; top:0; left:0; right:0; z-index:2;
+  transition:height .5s cubic-bezier(.4,0,.2,1);
+  height:0%;
+}
+.window-light-overlay {
+  position:absolute; inset:0; z-index:1;
+  background:rgba(255,200,100,.08);
+  transition:opacity .5s;
+}
+.window-label {
+  position:absolute; bottom:12px; left:0; right:0;
+  text-align:center; font-size:.72rem; color:rgba(255,255,255,.4);
+  z-index:3; letter-spacing:.06em; text-transform:uppercase;
+}
+
+/* ── Shade Type Cards ── */
+.shade-type-grid {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+}
+.shade-type-card {
+  background:var(--ms-surface2); border:1px solid var(--ms-border);
+  border-radius:var(--ms-radius); padding:20px 14px;
+  text-align:center; cursor:pointer; transition:all .22s;
+}
+.shade-type-card.active { border-color:var(--ms-accent); background:var(--ms-accent-dim); }
+.shade-type-card:hover { border-color:var(--ms-border2); }
+.shade-type-ico { font-size:1.8rem; margin-bottom:8px; }
+.shade-type-name { font-size:.78rem; font-weight:600; color:var(--ms-text); }
+.shade-type-desc { font-size:.68rem; color:var(--ms-text3); margin-top:4px; line-height:1.5; }
+.shade-type-card.active .shade-type-name { color:var(--ms-accent); }
+
+/* ── Fabric Swatches ── */
+.fabric-grid { display:flex; gap:12px; flex-wrap:wrap; }
+.fabric-sw {
+  width:52px; height:52px; border-radius:8px;
+  border:2px solid transparent; cursor:pointer;
+  transition:all .22s; position:relative; overflow:hidden;
+}
+.fabric-sw.active { border-color:var(--ms-accent); box-shadow:0 0 0 3px var(--ms-accent-dim); }
+.fabric-sw:hover { transform:scale(1.1); }
+
+/* ── Motor indicator ── */
+.motor-btn {
+  display:inline-flex; align-items:center; gap:10px;
+  padding:14px 28px;
+  border:1px solid var(--ms-border2);
+  border-radius:50px; background:var(--ms-accent-dim);
+  color:var(--ms-accent); font-size:.85rem; font-weight:600;
+  cursor:pointer; transition:all .22s; margin-top:16px;
+}
+.motor-btn:hover { background:var(--ms-accent); color:#fff; }
+.motor-status {
+  display:flex; align-items:center; gap:8px;
+  font-size:.75rem; color:var(--ms-text3);
+  margin-top:12px;
+}
+.motor-dot {
+  width:8px; height:8px; border-radius:50%;
+  background:var(--ms-text3); transition:background .3s;
+}
+.motor-dot.active { background:#00e5a0; box-shadow:0 0 8px #00e5a080; }
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">Shading</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 70% 60% at 30% 60%,rgba(0,157,199,.08),transparent),linear-gradient(160deg,#080f18 50%,#0c1520);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · Shading · Persianas &amp; Cortinas</div>
+    <h1 class="ms-hero-title">La luz entra<br>cuando vos<br><strong>lo decidís</strong>.</h1>
+    <p class="ms-hero-sub">Motores ultra-silenciosos. Telas de alta costura. Control total sobre la luz natural, la privacidad y el confort térmico de cada espacio.</p>
+    <a href="#simulador" class="ms-hero-cta">Simular movimiento</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: persiana roller descendiendo en sala de estar moderna con luz solar lateral -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">🪟</div>
+        <span>Persiana roller QMT descendiendo · sala de lujo · luz solar lateral dorada</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Motorización QMT</div>
+    <h2 class="ms-sh-title">Silencioso. Preciso. <strong>Permanente.</strong></h2>
+    <p class="ms-sh-sub">El motor QMT de Crestron lleva más de una década perfeccionando el movimiento de persianas. El resultado: inaudible, con posicionamiento exacto y sin mantenimiento.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🤫</div>
+      <div class="ms-card-title">Ultra-silencioso</div>
+      <div class="ms-card-text">Motor QMT digital. No se escucha al bajar ni al subir. Perfecto para dormitorios, salas de cine y espacios de meditación.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📐</div>
+      <div class="ms-card-title">Precisión milimétrica</div>
+      <div class="ms-card-text">Se detiene exactamente donde le indicás. Programá posiciones favoritas y activalas con un toque o una escena.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🔋</div>
+      <div class="ms-card-title">Cableado o batería</div>
+      <div class="ms-card-text">Opciones para nuevas construcciones y para reformas en espacios sin acceso a corriente. Sin obras en ambos casos.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🎨</div>
+      <div class="ms-card-title">Diseño sin límites</div>
+      <div class="ms-card-text">Amplia gama de tejidos, colores y hardware. Cada persiana combina perfectamente con la arquitectura y la decoración existente.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SHADE TYPE SELECTOR + SIMULATOR -->
+<div class="ms-section-dark">
+<section class="ms-section" id="simulador">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Tipos de cobertura</div>
+    <h2 class="ms-sh-title">Elegí tu <strong>estilo de persiana</strong>.</h2>
+    <p class="ms-sh-sub">Cada tipo tiene su propia personalidad y ventajas funcionales. Todos se controlan con la misma app, los mismos keypads y las mismas escenas.</p>
+  </div>
+
+  <div class="shade-type-grid ms-reveal" id="shade-type-grid">
+    <div class="shade-type-card active" onclick="setShadeType(this,'roller','Roller Shade','Blackout total o filtro solar controlado. La opción más versátil.','linear-gradient(180deg,#2a2a2a,#1a1a1a)')">
+      <div class="shade-type-ico">⬛</div>
+      <div class="shade-type-name">Roller</div>
+      <div class="shade-type-desc">Limpia y moderna</div>
+    </div>
+    <div class="shade-type-card" onclick="setShadeType(this,'sheer','Horizontal Sheer','Tejido con bandas alternas que regulan luz y privacidad.','linear-gradient(180deg,rgba(200,200,255,.2),rgba(100,100,200,.1))')">
+      <div class="shade-type-ico">🌫️</div>
+      <div class="shade-type-name">Horizontal Sheer</div>
+      <div class="shade-type-desc">Luz difusa elegante</div>
+    </div>
+    <div class="shade-type-card" onclick="setShadeType(this,'roman','Roman Shade','Pliegues horizontales con aspecto textil de alta costura.','repeating-linear-gradient(180deg,rgba(180,150,120,.3) 0,rgba(180,150,120,.1) 20px,rgba(180,150,120,.3) 24px)')">
+      <div class="shade-type-ico">🪡</div>
+      <div class="shade-type-name">Romana</div>
+      <div class="shade-type-desc">Clásica y sofisticada</div>
+    </div>
+    <div class="shade-type-card" onclick="setShadeType(this,'drape','Drapery','Cortinas de caída suave para una estética teatral y lujosa.','repeating-linear-gradient(90deg,rgba(150,130,180,.2) 0,rgba(150,130,180,.05) 10px,rgba(150,130,180,.2) 20px)')">
+      <div class="shade-type-ico">🎭</div>
+      <div class="shade-type-name">Drape</div>
+      <div class="shade-type-desc">Lujosa y dramática</div>
+    </div>
+  </div>
+
+  <div class="ms-grid-2" style="margin-top:48px; align-items:start;">
+    <div class="ms-reveal">
+      <div class="ms-config-label" id="shade-type-name-label">Roller Shade</div>
+      <div class="ms-config-title" style="font-size:1rem;margin-bottom:8px;" id="shade-type-desc-text">Blackout total o filtro solar controlado. La opción más versátil.</div>
+
+      <div style="margin-top:24px;">
+        <div class="ms-config-label">Tejido y color</div>
+        <div class="fabric-grid" id="fabric-grid" style="margin-top:10px;">
+          <div class="fabric-sw active" style="background:#1a1a1a;" data-name="Blackout Negro" onclick="setFabric(this,'#1a1a1a')"></div>
+          <div class="fabric-sw" style="background:#f5f0e8;" data-name="Sheer Blanco" onclick="setFabric(this,'#f5f0e8')"></div>
+          <div class="fabric-sw" style="background:#c8a87a;" data-name="Lino Natural" onclick="setFabric(this,'#c8a87a')"></div>
+          <div class="fabric-sw" style="background:#4a6fa5;" data-name="Azul Marino" onclick="setFabric(this,'#4a6fa5')"></div>
+          <div class="fabric-sw" style="background:#8a9e7a;" data-name="Verde Salvia" onclick="setFabric(this,'#8a9e7a')"></div>
+          <div class="fabric-sw" style="background:#2d3035;" data-name="Gris Antracita" onclick="setFabric(this,'#2d3035')"></div>
+        </div>
+        <div class="ms-swatch-name" id="fabric-name" style="margin-top:10px;">Blackout Negro</div>
+      </div>
+
+      <div style="margin-top:28px;">
+        <div class="ms-config-label">Posición</div>
+        <div class="ms-ctrl" style="padding:10px 0;">
+          <div class="ms-ctrl-ico">⬆️</div>
+          <div class="ms-ctrl-name">Apertura</div>
+          <input class="ms-ctrl-range" type="range" min="0" max="100" value="0" oninput="setShadePos(this.value)" id="shade-pos-slider">
+          <span class="ms-ctrl-val" id="shade-pos-val">Cerrada</span>
+        </div>
+      </div>
+
+      <button class="motor-btn" onclick="animateShade()">
+        <span id="motor-btn-text">▶ Demostrar movimiento</span>
+      </button>
+      <div class="motor-status">
+        <div class="motor-dot" id="motor-dot"></div>
+        <span id="motor-status-text">Motor detenido · Silencio total</span>
+      </div>
+    </div>
+
+    <div class="window-scene ms-reveal" id="window-scene">
+      <div class="window-sky" id="window-sky"></div>
+      <div class="window-floor"></div>
+      <div class="window-frame">
+        <div class="window-sky" style="position:absolute;inset:0;"></div>
+        <div class="shade-track" id="shade-panel" style="height:0%;background:linear-gradient(180deg,#1a1a1a,#1a1a1a);">
+        </div>
+        <div class="window-light-overlay" id="light-overlay"></div>
+      </div>
+      <div class="window-label" id="shade-scene-label">Vista desde el interior</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- GALLERY -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">En cada espacio</div>
+    <h2 class="ms-sh-title">El ambiente <strong>correcto</strong>, a la hora correcta.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🛏️</div><span>Dormitorio · roller blackout · amanecer controlado · persiana al 15%</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🎬</div><span>Home cinema · roller blackout total · oscuridad perfecta</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏢</div><span>Oficina en casa · horizontal sheer · luz difusa sin deslumbramiento</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<div class="ms-section-dark">
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">Integración total</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">Las persianas que <strong>piensan</strong> con el resto del hogar.</h2>
+  <p class="ms-sh-sub">Al activar la escena "Cine", las persianas bajan solas. Al amanecer, suben gradualmente con la música de tu elección.</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Shading QMT</span>
+    <span class="ms-chip">Iluminación Zūm</span>
+    <span class="ms-chip">Keypads Horizon</span>
+    <span class="ms-chip">Termostatos</span>
+    <span class="ms-chip">Escenas automáticas</span>
+    <span class="ms-chip">App Crestron Home</span>
+    <span class="ms-chip">Control por voz</span>
+  </div>
+</div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">Shading · Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">La persiana perfecta<br>para tu <strong>estilo de vida</strong>.</h2>
+    <p class="ms-cta-sub">Un integrador certificado puede asesorarte sobre tejidos, acabados y la configuración ideal para cada habitación.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Consultar con un integrador →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: terraza de penthouse con drapery abriendo hacia vista panorámica urbana -->
+      <div class="ms-img-ph" style="height:260px;border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🌆</div>
+        <span>Terraza penthouse · drapery abriéndose · vista panorámica ciudad · amanecer</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3);text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+let currentFabricColor = '#1a1a1a';
+let currentShadePattern = 'linear-gradient(180deg,#1a1a1a,#1a1a1a)';
+let shadePos = 0;
+let isAnimating = false;
+
+function setShadeType(card, type, name, desc, pattern) {
+  document.querySelectorAll('.shade-type-card').forEach(c => c.classList.remove('active'));
+  card.classList.add('active');
+  document.getElementById('shade-type-name-label').textContent = name;
+  document.getElementById('shade-type-desc-text').textContent = desc;
+  currentShadePattern = pattern;
+  document.getElementById('shade-panel').style.background = pattern;
+}
+
+function setFabric(sw, color) {
+  document.querySelectorAll('.fabric-sw').forEach(s => s.classList.remove('active'));
+  sw.classList.add('active');
+  currentFabricColor = color;
+  document.getElementById('fabric-name').textContent = sw.dataset.name;
+  // update shade color if it's roller
+  const active = document.querySelector('.shade-type-card.active');
+  if(active && active.querySelector('.shade-type-name').textContent === 'Roller') {
+    currentShadePattern = `linear-gradient(180deg,${color},${color})`;
+    document.getElementById('shade-panel').style.background = currentShadePattern;
+  }
+}
+
+function setShadePos(val) {
+  shadePos = parseInt(val);
+  const pct = shadePos + '%';
+  document.getElementById('shade-panel').style.height = pct;
+  const lightOpacity = (shadePos / 100) * 0.85;
+  document.getElementById('light-overlay').style.opacity = (1 - shadePos/100);
+  if(shadePos === 0) document.getElementById('shade-pos-val').textContent = 'Cerrada';
+  else if(shadePos === 100) document.getElementById('shade-pos-val').textContent = 'Abierta';
+  else document.getElementById('shade-pos-val').textContent = shadePos + '%';
+  document.getElementById('window-scene').style.setProperty('--shade-height', pct);
+}
+
+function animateShade() {
+  if(isAnimating) return;
+  isAnimating = true;
+  const dot = document.getElementById('motor-dot');
+  const statusText = document.getElementById('motor-status-text');
+  const btnText = document.getElementById('motor-btn-text');
+  dot.classList.add('active');
+  btnText.textContent = '⏸ Motor en movimiento...';
+  statusText.textContent = 'Motor QMT activo · < 25 dB';
+
+  const slider = document.getElementById('shade-pos-slider');
+  const start = shadePos;
+  const end = shadePos < 50 ? 100 : 0;
+  const step = end > start ? 1 : -1;
+  let current = start;
+
+  const interval = setInterval(() => {
+    current += step;
+    slider.value = current;
+    setShadePos(current);
+    if(current === end) {
+      clearInterval(interval);
+      dot.classList.remove('active');
+      btnText.textContent = '▶ Demostrar movimiento';
+      statusText.textContent = 'Motor detenido · Silencio total';
+      isAnimating = false;
+    }
+  }, 16);
+}
+
+/* ── Scroll Reveal ── */
+const obs = new IntersectionObserver(entries => entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:.12});
+document.querySelectorAll('.ms-reveal').forEach(el=>obs.observe(el));
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>

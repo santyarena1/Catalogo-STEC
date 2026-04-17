@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — Seguridad &amp; Accesos</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── Lock Simulator ── */
+.lock-wrap { display:flex; flex-direction:column; align-items:center; gap:20px; padding:32px; }
+.lock-device {
+  width:200px; border-radius:16px; padding:28px 20px;
+  box-shadow:0 28px 72px rgba(0,0,0,.7);
+  transition:background .35s;
+  background:#1a1a1a;
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+}
+.lock-icon-wrap {
+  width:80px; height:80px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center;
+  font-size:2.2rem; transition:all .4s;
+  border:2px solid rgba(255,255,255,.1);
+}
+.lock-icon-wrap.locked { background:rgba(255,100,100,.12); border-color:rgba(255,100,100,.3); }
+.lock-icon-wrap.unlocked { background:rgba(0,229,160,.12); border-color:rgba(0,229,160,.3); }
+.lock-status-text {
+  font-size:.82rem; font-weight:600; letter-spacing:.08em; text-transform:uppercase;
+  transition:color .3s;
+}
+.lock-status-text.locked { color:rgba(255,120,120,.8); }
+.lock-status-text.unlocked { color:#00e5a0; }
+.lock-status-bar {
+  width:100%; height:4px; border-radius:2px; transition:background .4s;
+}
+.lock-btn {
+  width:100%; padding:14px; border-radius:10px; border:none;
+  font-size:.82rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase;
+  cursor:pointer; transition:all .25s;
+}
+.lock-btn:hover { transform:scale(1.02); }
+.lock-model { font-size:.7rem; color:rgba(255,255,255,.25); letter-spacing:.08em; text-align:center; }
+
+/* ── Door Status ── */
+.door-indicator {
+  display:flex; align-items:center; gap:10px;
+  padding:12px 20px;
+  background:var(--ms-surface2); border:1px solid var(--ms-border);
+  border-radius:50px; font-size:.8rem; color:var(--ms-text2);
+}
+.door-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+
+/* ── Autolock ── */
+.autolock-countdown {
+  font-size:1.4rem; font-weight:700; color:var(--ms-accent);
+  min-width:30px; text-align:center;
+}
+
+/* ── Finish selector for Yale ── */
+.yale-finish-grid {
+  display:grid; grid-template-columns:repeat(2,1fr); gap:12px; margin-top:16px;
+}
+.yale-finish {
+  padding:16px; border-radius:var(--ms-radius);
+  border:1px solid var(--ms-border);
+  cursor:pointer; transition:all .22s;
+  display:flex; align-items:center; gap:12px;
+}
+.yale-finish.active { border-color:var(--ms-accent); background:var(--ms-accent-dim); }
+.yale-finish:hover { border-color:var(--ms-border2); }
+.yale-finish-swatch { width:32px; height:32px; border-radius:8px; flex-shrink:0; }
+.yale-finish-name { font-size:.78rem; font-weight:600; color:var(--ms-text); }
+.yale-finish-desc { font-size:.68rem; color:var(--ms-text3); }
+
+/* ── Security devices grid ── */
+.sec-device { background:var(--ms-surface2); border:1px solid var(--ms-border); border-radius:var(--ms-radius); padding:20px; transition:all .22s; }
+.sec-device:hover { border-color:var(--ms-border2); }
+.sec-device-ico { font-size:1.6rem; margin-bottom:10px; }
+.sec-device-name { font-size:.84rem; font-weight:600; color:var(--ms-text); margin-bottom:6px; }
+.sec-device-text { font-size:.76rem; color:var(--ms-text2); line-height:1.65; }
+.sec-badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:10px; }
+.sec-badge { padding:3px 10px; border-radius:50px; font-size:.66rem; font-weight:600; background:var(--ms-accent-dim); color:var(--ms-accent); border:1px solid rgba(0,157,199,.2); }
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">Seguridad &amp; Accesos</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 70% 60% at 30% 50%,rgba(0,229,160,.05),transparent),linear-gradient(160deg,#080f18 50%,#080e14);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · Seguridad &amp; Accesos</div>
+    <h1 class="ms-hero-title">El hogar sabe<br>cuándo estás<br><strong>y cuándo no</strong>.</h1>
+    <p class="ms-hero-sub">Cerraduras inteligentes Yale, videoporteros IP y sensores conectados que actúan solos. La seguridad que no te pide nada: está siempre ahí.</p>
+    <a href="#cerradura" class="ms-hero-cta">Explorar la cerradura</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: cerradura Yale Pro 2 en acabado Black Suede instalada en puerta de madera oscura -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">🔐</div>
+        <span>Cerradura Yale Pro 2 · Black Suede · puerta de madera oscura · iluminación arquitectónica</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Seguridad integrada</div>
+    <h2 class="ms-sh-title">La puerta que <strong>trabaja con</strong> el resto del hogar.</h2>
+    <p class="ms-sh-sub">No es solo una cerradura. Es la entrada al ecosistema Crestron: al abrirla, las luces se encienden, la temperatura se ajusta y la música empieza.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📡</div>
+      <div class="ms-card-title">infiNET EX inalámbrico</div>
+      <div class="ms-card-text">Comunicación encriptada de largo alcance. Sin necesidad de gateway adicional. Se instala en minutos.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🚶</div>
+      <div class="ms-card-title">Auto-lock por proximidad</div>
+      <div class="ms-card-text">Se bloquea sola al alejarte. Se desbloquea al reconocer tu teléfono. Sin buscar llaves, sin recordar.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🚪</div>
+      <div class="ms-card-title">DoorSense™</div>
+      <div class="ms-card-text">Detecta si la puerta está realmente cerrada. Notificación inmediata si queda abierta más de lo previsto.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🛡️</div>
+      <div class="ms-card-title">UL &amp; IPX5 certificada</div>
+      <div class="ms-card-text">Certificaciones de seguridad industrial y resistencia al agua. Diseñada para durar décadas sin mantenimiento.</div>
+    </div>
+  </div>
+</section>
+
+<!-- LOCK SIMULATOR -->
+<div class="ms-section-dark">
+<section class="ms-section" id="cerradura">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Simulador interactivo</div>
+    <h2 class="ms-sh-title">Hacé clic para <strong>bloquear y desbloquear</strong>.</h2>
+    <p class="ms-sh-sub">Así se ve el control desde la app Crestron Home. Y así de simple es el acceso remoto desde cualquier parte del mundo.</p>
+  </div>
+
+  <div class="ms-grid-2" style="align-items:start; gap:48px;">
+    <div class="ms-reveal" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="lock-wrap">
+        <div class="lock-device" id="lock-device">
+          <div class="lock-icon-wrap locked" id="lock-icon">🔒</div>
+          <div class="lock-status-text locked" id="lock-status">BLOQUEADA</div>
+          <div class="lock-status-bar" id="lock-sbar" style="background:rgba(255,100,100,.6);"></div>
+          <button class="lock-btn" id="lock-btn"
+            style="background:rgba(0,229,160,.15);color:#00e5a0;border:1px solid rgba(0,229,160,.3);"
+            onclick="toggleLock()">Desbloquear</button>
+          <div class="lock-model" id="lock-model-label">Yale Pro 2 · Black Suede</div>
+        </div>
+
+        <div class="door-indicator" id="door-indicator">
+          <div class="door-dot" id="door-dot" style="background:#00e5a0;box-shadow:0 0 8px #00e5a080;"></div>
+          <span id="door-text">Puerta cerrada</span>
+          <button style="margin-left:auto;background:transparent;border:none;color:var(--ms-text3);cursor:pointer;font-size:.76rem;" onclick="toggleDoor()">Simular apertura</button>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 20px;background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:50px;font-size:.78rem;color:var(--ms-text2);">
+          <span>🔄 Auto-lock en</span>
+          <span class="autolock-countdown" id="autolock-countdown">30</span>
+          <span>segundos</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="ms-reveal">
+      <div class="ms-config-label">Acabado Yale Pro 2</div>
+      <div class="ms-config-title" style="margin-bottom:6px;">Cuatro acabados excepcionales.</div>
+      <p style="font-size:.82rem;color:var(--ms-text2);line-height:1.7;margin-bottom:20px;">Cada acabado Yale Pro 2 está pensado para combinarse con la paleta de materiales más exigente. Diseño compacto con estética moderna.</p>
+
+      <div class="yale-finish-grid" id="yale-finishes">
+        <div class="yale-finish active" onclick="setYaleFinish(this,'#1a1a1a','Yale Pro 2 · Black Suede')">
+          <div class="yale-finish-swatch" style="background:#1a1a1a;"></div>
+          <div><div class="yale-finish-name">Black Suede</div><div class="yale-finish-desc">Contemporáneo y discreto</div></div>
+        </div>
+        <div class="yale-finish" onclick="setYaleFinish(this,'#c8a96e','Yale Pro 2 · Lifetime Brass')">
+          <div class="yale-finish-swatch" style="background:linear-gradient(135deg,#c8a96e,#b8924a);"></div>
+          <div><div class="yale-finish-name">Lifetime Brass</div><div class="yale-finish-desc">Clásico y atemporal</div></div>
+        </div>
+        <div class="yale-finish" onclick="setYaleFinish(this,'#3d2b1f','Yale Pro 2 · Oil-Rubbed Bronze')">
+          <div class="yale-finish-swatch" style="background:linear-gradient(135deg,#4a3226,#2d1e16);"></div>
+          <div><div class="yale-finish-name">Oil-Rubbed Bronze</div><div class="yale-finish-desc">Rústico y lujoso</div></div>
+        </div>
+        <div class="yale-finish" onclick="setYaleFinish(this,'#c0c0c0','Yale Pro 2 · Satin Nickel')">
+          <div class="yale-finish-swatch" style="background:linear-gradient(135deg,#d8d8d8,#a8a8a8);"></div>
+          <div><div class="yale-finish-name">Satin Nickel</div><div class="yale-finish-desc">Moderno y universal</div></div>
+        </div>
+      </div>
+
+      <div style="margin-top:28px;">
+        <div class="ms-config-label" style="margin-bottom:14px;">Funciones de acceso disponibles</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <div style="padding:12px 14px;background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:var(--ms-radius);font-size:.78rem;color:var(--ms-text2);">🔑 Con llave física</div>
+          <div style="padding:12px 14px;background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:var(--ms-radius);font-size:.78rem;color:var(--ms-text2);">⌨️ Teclado PIN</div>
+          <div style="padding:12px 14px;background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:var(--ms-radius);font-size:.78rem;color:var(--ms-text2);">👆 Pantalla táctil</div>
+          <div style="padding:12px 14px;background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:var(--ms-radius);font-size:.78rem;color:var(--ms-text2);">📱 App remota</div>
+          <div style="padding:12px 14px;background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:var(--ms-radius);font-size:.78rem;color:var(--ms-text2);">🤳 Proximidad</div>
+          <div style="padding:12px 14px;background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:var(--ms-radius);font-size:.78rem;color:var(--ms-text2);">🎙️ Voz (Alexa/Siri)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- COMPATIBLE DEVICES -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Dispositivos compatibles</div>
+    <h2 class="ms-sh-title">Toda la seguridad,<br><strong>un único sistema</strong>.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:20px;">
+    <div class="sec-device ms-reveal">
+      <div class="sec-device-ico">🔐</div>
+      <div class="sec-device-name">Yale Pro 2 Smart Lock</div>
+      <div class="sec-device-text">Cerradura inteligente con múltiples modos de acceso, infiNET EX y sensor DoorSense™. Certificación UL e IPX5.</div>
+      <div class="sec-badges"><span class="sec-badge">infiNET EX</span><span class="sec-badge">UL</span><span class="sec-badge">IPX5</span></div>
+    </div>
+    <div class="sec-device ms-reveal">
+      <div class="sec-device-ico">📹</div>
+      <div class="sec-device-name">Videoportero IP 2N</div>
+      <div class="sec-device-text">Video HD con intercomunicador integrado. Se controla desde la app Crestron o desde cualquier pantalla táctil del hogar.</div>
+      <div class="sec-badges"><span class="sec-badge">HD</span><span class="sec-badge">IP</span><span class="sec-badge">2-Way Audio</span></div>
+    </div>
+    <div class="sec-device ms-reveal">
+      <div class="sec-device-ico">🚪</div>
+      <div class="sec-device-name">DoorBird HD</div>
+      <div class="sec-device-text">Estación de puerta con cámara gran angular, sensor de movimiento y apertura remota integrada con Crestron.</div>
+      <div class="sec-badges"><span class="sec-badge">Motion</span><span class="sec-badge">Night Vision</span><span class="sec-badge">API</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<div class="ms-section-dark">
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Galería de instalaciones</div>
+    <h2 class="ms-sh-title">Seguridad que <strong>no interrumpe</strong> el diseño.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏡</div><span>Puerta de entrada residencial · Yale Pro 2 Black Suede · arquitectura moderna minimalista</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">📲</div><span>App Crestron Home · pantalla de accesos · notificación DoorSense abierta</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🎛️</div><span>Videoportero 2N · pared exterior · vista primer plano · acabado premium</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ECOSYSTEM -->
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">Integración Crestron Home</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">La puerta que <strong>activa el hogar</strong>.</h2>
+  <p class="ms-sh-sub">Al llegar, la cerradura te reconoce: las luces se encienden, el termostato ajusta la temperatura y tu playlist favorita empieza a sonar.</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Cerraduras Yale</span>
+    <span class="ms-chip">Videoporteros 2N/DoorBird</span>
+    <span class="ms-chip">Iluminación Zūm</span>
+    <span class="ms-chip">Keypads Horizon</span>
+    <span class="ms-chip">Clima</span>
+    <span class="ms-chip">Audio</span>
+    <span class="ms-chip">Escenas de bienvenida</span>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">Seguridad · Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">El hogar seguro que<br><strong>trabaja sin vos</strong>.</h2>
+    <p class="ms-cta-sub">Consultá con un integrador certificado y diseñamos juntos el sistema de accesos y seguridad perfecto para tu propiedad.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Diseñar mi sistema de seguridad →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: persona acercándose a puerta, cerradura desbloqueándose automáticamente, anochecer -->
+      <div class="ms-img-ph" style="height:260px;border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🌆</div>
+        <span>Persona llegando a casa · cerradura Yale desbloqueándose · luces encendiéndose · anochecer</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3);text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+let isLocked = true;
+let isDoorOpen = false;
+let autolockTimer = null;
+let autolockCount = 30;
+
+function toggleLock() {
+  isLocked = !isLocked;
+  const icon = document.getElementById('lock-icon');
+  const status = document.getElementById('lock-status');
+  const bar = document.getElementById('lock-sbar');
+  const btn = document.getElementById('lock-btn');
+
+  if(isLocked) {
+    icon.textContent = '🔒';
+    icon.className = 'lock-icon-wrap locked';
+    status.textContent = 'BLOQUEADA';
+    status.className = 'lock-status-text locked';
+    bar.style.background = 'rgba(255,100,100,.6)';
+    btn.textContent = 'Desbloquear';
+    btn.style.cssText = 'width:100%;padding:14px;border-radius:10px;border:1px solid rgba(0,229,160,.3);background:rgba(0,229,160,.15);color:#00e5a0;font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .25s;';
+    clearInterval(autolockTimer);
+    document.getElementById('autolock-countdown').textContent = '30';
+    autolockCount = 30;
+  } else {
+    icon.textContent = '🔓';
+    icon.className = 'lock-icon-wrap unlocked';
+    status.textContent = 'DESBLOQUEADA';
+    status.className = 'lock-status-text unlocked';
+    bar.style.background = '#00e5a0';
+    btn.textContent = 'Bloquear';
+    btn.style.cssText = 'width:100%;padding:14px;border-radius:10px;border:1px solid rgba(255,100,100,.3);background:rgba(255,100,100,.12);color:rgba(255,120,120,.9);font-size:.82rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;transition:all .25s;';
+    startAutolock();
+  }
+}
+
+function startAutolock() {
+  autolockCount = 30;
+  clearInterval(autolockTimer);
+  autolockTimer = setInterval(() => {
+    autolockCount--;
+    document.getElementById('autolock-countdown').textContent = autolockCount;
+    if(autolockCount <= 0) {
+      clearInterval(autolockTimer);
+      if(!isLocked) toggleLock();
+    }
+  }, 1000);
+}
+
+function toggleDoor() {
+  isDoorOpen = !isDoorOpen;
+  const dot = document.getElementById('door-dot');
+  const text = document.getElementById('door-text');
+  if(isDoorOpen) {
+    dot.style.background = 'rgba(255,100,100,.8)';
+    dot.style.boxShadow = '0 0 8px rgba(255,100,100,.5)';
+    text.textContent = 'Puerta abierta';
+  } else {
+    dot.style.background = '#00e5a0';
+    dot.style.boxShadow = '0 0 8px #00e5a080';
+    text.textContent = 'Puerta cerrada';
+  }
+}
+
+function setYaleFinish(el, color, label) {
+  document.querySelectorAll('.yale-finish').forEach(f=>f.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('lock-device').style.background = color;
+  document.getElementById('lock-model-label').textContent = label;
+}
+
+const obs = new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:.12});
+document.querySelectorAll('.ms-reveal').forEach(el=>obs.observe(el));
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>

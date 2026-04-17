@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — Clima · Horizon Thermostats</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── Thermostat ── */
+.thermo-wrap {
+  display:flex; flex-direction:column; align-items:center; gap:24px; padding:40px;
+}
+.thermo-device {
+  width:220px; height:280px;
+  border-radius:20px; position:relative;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  box-shadow:0 32px 80px rgba(0,0,0,.7);
+  transition:background .35s;
+  background:#1a1a1a;
+  overflow:hidden;
+}
+.thermo-status-bar {
+  position:absolute; top:0; left:0; right:0; height:5px;
+  transition:background .4s;
+}
+.thermo-screen {
+  position:absolute; inset:14px;
+  border-radius:12px; overflow:hidden;
+  background:#0d1117;
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:4px;
+}
+.thermo-label-mode { font-size:.62rem; letter-spacing:.14em; text-transform:uppercase; color:rgba(232,237,243,.35); }
+.thermo-temp-display {
+  font-size:3.2rem; font-weight:300; color:var(--ms-text);
+  line-height:1; letter-spacing:-.04em;
+}
+.thermo-temp-unit { font-size:1rem; color:rgba(232,237,243,.5); }
+.thermo-temp-set { font-size:.76rem; color:rgba(232,237,243,.4); margin-top:2px; }
+.thermo-ring-svg { position:absolute; inset:0; pointer-events:none; }
+.thermo-prox { font-size:.6rem; color:rgba(232,237,243,.2); text-transform:uppercase; letter-spacing:.1em; margin-top:8px; }
+
+/* ── Dial ── */
+.thermo-dial-wrap { position:relative; width:220px; height:220px; }
+.thermo-dial {
+  width:100%; height:100%;
+  border-radius:50%;
+  background:var(--ms-surface2);
+  border:1px solid var(--ms-border);
+  cursor:ns-resize;
+  position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.thermo-dial-inner { text-align:center; }
+.thermo-dial-temp { font-size:2.8rem; font-weight:300; color:var(--ms-text); line-height:1; }
+.thermo-dial-hint { font-size:.68rem; color:var(--ms-text3); margin-top:6px; letter-spacing:.06em; }
+.thermo-dial-ring {
+  position:absolute; inset:0; border-radius:50%;
+  border:3px solid var(--ms-accent);
+  clip-path: inset(0 0 50% 0); /* top half */
+  transition:border-color .3s;
+}
+
+/* ── Circadian chart ── */
+.circadian-chart {
+  display:grid; grid-template-columns:repeat(24,1fr); gap:2px; height:80px; align-items:flex-end;
+  padding:0 4px;
+}
+.circ-col { display:flex; flex-direction:column; gap:2px; align-items:center; }
+.circ-bar { width:100%; border-radius:2px 2px 0 0; transition:height .4s; }
+.circ-hour { font-size:.5rem; color:var(--ms-text3); }
+
+/* ── Finish swatches for thermostat ── */
+.thermo-sw-wrap { display:flex; gap:10px; margin-top:12px; }
+.thermo-sw {
+  width:44px; height:44px; border-radius:50%;
+  border:2px solid transparent; cursor:pointer;
+  transition:all .22s;
+}
+.thermo-sw.active { border-color:var(--ms-accent); box-shadow:0 0 0 3px var(--ms-accent-dim); }
+.thermo-sw:hover { transform:scale(1.12); }
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">Clima · Thermostats</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 70% 60% at 60% 40%,rgba(0,157,199,.08),transparent),linear-gradient(160deg,#080f18 50%,#08101a);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · Clima · Horizon Thermostats</div>
+    <h1 class="ms-hero-title">La temperatura<br>que el hogar<br><strong>aprende</strong>.</h1>
+    <p class="ms-hero-sub">Un termostato ultra-delgado con pantalla de alta resolución que se adapta a la luz del ambiente, responde a tu proximidad y se integra con cada aspecto del hogar Crestron.</p>
+    <a href="#termostato" class="ms-hero-cta">Interactuar con el termostato</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: termostato Horizon Negro montado en pared de madera natural, minimalista -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">🌡️</div>
+        <span>Termostato Horizon Negro · pared de madera natural · iluminación cálida · barra RGB visible</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Horizon Thermostats</div>
+    <h2 class="ms-sh-title">Diseñado para <strong>pasar desapercibido</strong>.<br>Imposible de ignorar.</h2>
+    <p class="ms-sh-sub">Ultra-delgado, sin cables visibles, sin baterías. El termostato que se integra con la pared y con toda la arquitectura del hogar Crestron.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">✨</div>
+      <div class="ms-card-title">Pantalla de alta resolución</div>
+      <div class="ms-card-text">Fácil de leer y ajustar. Brillo adaptativo con sensor de luz ambiental. Modo oscuro y claro según el entorno.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">👋</div>
+      <div class="ms-card-title">Sensor de proximidad</div>
+      <div class="ms-card-text">La pantalla se activa cuando te acercás. Sin tocarla. Un detalle de diseño que multiplica la sensación de lujo.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🌈</div>
+      <div class="ms-card-title">Barra de estado RGB</div>
+      <div class="ms-card-text">Indica el estado del clima de un vistazo con un acento cromático que también funciona como elemento decorativo.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🔋</div>
+      <div class="ms-card-title">Sin baterías</div>
+      <div class="ms-card-text">Alimentado directamente desde el cableado. Nunca te encontrás con la sorpresa de temperatura sin control.</div>
+    </div>
+  </div>
+</section>
+
+<!-- THERMOSTAT INTERACTIVE -->
+<div class="ms-section-dark">
+<section class="ms-section" id="termostato">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Experiencia interactiva</div>
+    <h2 class="ms-sh-title">Ajustá la <strong>temperatura</strong>. Mirá cómo responde.</h2>
+    <p class="ms-sh-sub">La barra de estado cambia de color según el modo. Arrastrá el control para cambiar la temperatura objetivo.</p>
+  </div>
+
+  <div class="ms-grid-2" style="align-items:start; gap:48px;">
+    <div class="ms-reveal" style="display:flex;flex-direction:column;align-items:center;">
+      <div class="thermo-wrap">
+        <div class="thermo-device" id="thermo-device">
+          <div class="thermo-status-bar" id="thermo-sbar" style="background:#009DC7;"></div>
+          <div class="thermo-screen">
+            <div class="thermo-label-mode" id="thermo-mode">ENFRIANDO</div>
+            <div>
+              <span class="thermo-temp-display" id="thermo-current">22</span>
+              <span class="thermo-temp-unit">°C</span>
+            </div>
+            <div class="thermo-temp-set" id="thermo-setpoint">Objetivo: 20°C</div>
+            <svg class="thermo-ring-svg" id="thermo-ring-svg" viewBox="0 0 220 280">
+              <circle cx="110" cy="140" r="80" fill="none" stroke="rgba(0,157,199,.08)" stroke-width="3"/>
+              <circle cx="110" cy="140" r="80" fill="none" stroke="#009DC7" stroke-width="3" stroke-linecap="round"
+                stroke-dasharray="502" stroke-dashoffset="126" id="thermo-arc" transform="rotate(-90 110 140)"
+                style="transition:stroke .4s,stroke-dashoffset .5s;"/>
+            </svg>
+            <div class="thermo-prox">Sensor de proximidad activo</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="width:100%;max-width:280px;">
+        <div class="ms-ctrl">
+          <div class="ms-ctrl-ico">🎯</div>
+          <div class="ms-ctrl-name">Temperatura</div>
+          <input class="ms-ctrl-range" type="range" min="16" max="30" value="20" oninput="setThermoTemp(parseInt(this.value))" id="temp-slider">
+          <span class="ms-ctrl-val" id="temp-val">20°C</span>
+        </div>
+        <div class="ms-ctrl">
+          <div class="ms-ctrl-ico">💧</div>
+          <div class="ms-ctrl-name">Humedad actual</div>
+          <input class="ms-ctrl-range" type="range" min="30" max="80" value="55" oninput="this.nextElementSibling.textContent=this.value+'%'" style="pointer-events:none;">
+          <span class="ms-ctrl-val">55%</span>
+        </div>
+      </div>
+
+      <div style="margin-top:20px; text-align:center;">
+        <div class="ms-config-label">Acabado del dispositivo</div>
+        <div class="thermo-sw-wrap" style="justify-content:center;">
+          <div class="thermo-sw active" style="background:#1a1a1a;" data-name="Negro" onclick="setThermoFinish(this,'#1a1a1a')"></div>
+          <div class="thermo-sw" style="background:#f0ede8;" data-name="Blanco" onclick="setThermoFinish(this,'#f0ede8')"></div>
+          <div class="thermo-sw" style="background:#c8b98a;" data-name="Almendra" onclick="setThermoFinish(this,'#c8b98a')"></div>
+        </div>
+        <div class="ms-swatch-name" id="thermo-finish-name" style="text-align:center;">Negro</div>
+      </div>
+
+      <div class="ms-scenes" style="justify-content:center; margin-top:20px;">
+        <button class="ms-scene-btn" onclick="setThermoMode(this,'cool','#009DC7','ENFRIANDO')">❄️ Frío</button>
+        <button class="ms-scene-btn active" onclick="setThermoMode(this,'heat','#FF6B35','CALENTANDO')">🔥 Calor</button>
+        <button class="ms-scene-btn" onclick="setThermoMode(this,'auto','#00e5a0','AUTO')">🔄 Auto</button>
+        <button class="ms-scene-btn" onclick="setThermoMode(this,'off','rgba(255,255,255,.1)','APAGADO')">⭕ Off</button>
+      </div>
+    </div>
+
+    <div class="ms-reveal">
+      <div class="ms-config-label">Programación circadiana</div>
+      <div class="ms-config-title" style="margin-bottom:6px;">El hogar a tu ritmo de vida.</div>
+      <p style="font-size:.82rem;color:var(--ms-text2);line-height:1.7;margin-bottom:24px;">El Horizon Thermostat puede programarse para seguir el ciclo de tu día: temperatura óptima para dormir, ideal para despertar y perfecta para trabajar.</p>
+      <div style="background:var(--ms-surface2);border:1px solid var(--ms-border);border-radius:var(--ms-radius);padding:24px;">
+        <div class="ms-config-label" style="margin-bottom:16px;">Temperatura por hora — hoy</div>
+        <div class="circadian-chart" id="circadian-chart"></div>
+        <div style="display:flex;justify-content:space-between;margin-top:8px;padding:0 4px;">
+          <span style="font-size:.66rem;color:var(--ms-text3);">00:00</span>
+          <span style="font-size:.66rem;color:var(--ms-text3);">06:00</span>
+          <span style="font-size:.66rem;color:var(--ms-text3);">12:00</span>
+          <span style="font-size:.66rem;color:var(--ms-text3);">18:00</span>
+          <span style="font-size:.66rem;color:var(--ms-text3);">24:00</span>
+        </div>
+      </div>
+
+      <div style="margin-top:24px;">
+        <div class="ms-config-label" style="margin-bottom:14px;">Estados de la barra RGB</div>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:6px;border-radius:3px;background:#009DC7;box-shadow:0 0 10px #009DC7;flex-shrink:0;"></div>
+            <span style="font-size:.8rem;color:var(--ms-text2);">Cyan — enfriando activo</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:6px;border-radius:3px;background:#FF6B35;box-shadow:0 0 10px #FF6B35;flex-shrink:0;"></div>
+            <span style="font-size:.8rem;color:var(--ms-text2);">Naranja — calentando activo</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:6px;border-radius:3px;background:#00e5a0;box-shadow:0 0 10px #00e5a0;flex-shrink:0;"></div>
+            <span style="font-size:.8rem;color:var(--ms-text2);">Verde — temperatura óptima alcanzada</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;">
+            <div style="width:40px;height:6px;border-radius:3px;background:rgba(255,255,255,.15);flex-shrink:0;"></div>
+            <span style="font-size:.8rem;color:var(--ms-text2);">Blanco tenue — sistema apagado</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- GALLERY -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">En cada ambiente</div>
+    <h2 class="ms-sh-title">El clima <strong>invisible</strong> que se siente.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🛏️</div><span>Termostato Horizon Blanco · dormitorio minimalista · barra RGB verde "temperatura ideal"</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏠</div><span>Termostato Horizon Almendra · living · pared de ladrillo vista · tarde</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">💻</div><span>Macro de la pantalla táctil del termostato · datos de temperatura y humedad claros</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<div class="ms-section-dark">
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">Integración Crestron Home</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">El clima que <strong>colabora</strong> con cada escena.</h2>
+  <p class="ms-sh-sub">Al activar la escena "Noche", la temperatura baja a 19°C sola. Al llegar a casa, ya está en la temperatura perfecta esperándote.</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Horizon Thermostats</span>
+    <span class="ms-chip">Keypads Horizon</span>
+    <span class="ms-chip">Iluminación Zūm</span>
+    <span class="ms-chip">Persianas</span>
+    <span class="ms-chip">Escenas automáticas</span>
+    <span class="ms-chip">App Crestron Home</span>
+    <span class="ms-chip">Control remoto</span>
+  </div>
+</div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">Clima · Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">La temperatura perfecta,<br><strong>siempre y sin esfuerzo</strong>.</h2>
+    <p class="ms-cta-sub">Un integrador certificado puede programar el termostato con las rutinas y preferencias exactas de tu hogar.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Programar mi clima ideal →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: persona llegando a casa, termostato mostrando "Bienvenido" y temperatura perfecta -->
+      <div class="ms-img-ph" style="height:260px;border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🏠</div>
+        <span>Entrada de hogar · termostato Horizon activándose por proximidad · luz cálida · bienvenida</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3);text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+let thermoMode = 'heat';
+let thermoColor = '#FF6B35';
+let thermoTarget = 20;
+const thermoAmbient = 22;
+
+function setThermoTemp(val) {
+  thermoTarget = val;
+  document.getElementById('temp-val').textContent = val+'°C';
+  document.getElementById('thermo-setpoint').textContent = `Objetivo: ${val}°C`;
+  updateThermoDisplay();
+}
+
+function setThermoMode(btn, mode, color, label) {
+  document.querySelectorAll('#termostato .ms-scene-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  thermoMode = mode;
+  thermoColor = color;
+  document.getElementById('thermo-mode').textContent = label;
+  document.getElementById('thermo-sbar').style.background = color;
+  document.getElementById('thermo-arc').style.stroke = color;
+  if(mode==='off') { document.getElementById('thermo-arc').style.stroke='rgba(255,255,255,.1)'; }
+}
+
+function setThermoFinish(sw, color) {
+  document.querySelectorAll('.thermo-sw').forEach(s=>s.classList.remove('active'));
+  sw.classList.add('active');
+  document.getElementById('thermo-device').style.background = color;
+  document.getElementById('thermo-finish-name').textContent = sw.dataset.name;
+}
+
+function updateThermoDisplay() {
+  const arc = document.getElementById('thermo-arc');
+  const circ = 2*Math.PI*80;
+  const ratio = (thermoTarget - 16) / (30 - 16);
+  const offset = circ - (circ * ratio * 0.75);
+  arc.setAttribute('stroke-dasharray', circ);
+  arc.setAttribute('stroke-dashoffset', offset);
+}
+
+/* ── Circadian Chart ── */
+function renderCircadian() {
+  const chart = document.getElementById('circadian-chart');
+  const temps = [17,17,17,17,17,17,18,19,21,22,22,23,23,23,22,22,22,22,21,21,20,19,18,17];
+  const minT=16, maxT=25;
+  chart.innerHTML = temps.map((t,h) => {
+    const hPct = Math.round(((t-minT)/(maxT-minT))*100);
+    const isNow = h === new Date().getHours();
+    const c = t<20 ? '#009DC7' : t<22 ? '#00e5a0' : '#FF6B35';
+    return `<div class="circ-col">
+      <div class="circ-bar" style="height:${hPct}%;background:${c};opacity:${isNow?1:.5};${isNow?'box-shadow:0 0 8px '+c+';':''}"></div>
+    </div>`;
+  }).join('');
+}
+
+/* ── Scroll Reveal ── */
+const obs = new IntersectionObserver(entries=>entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:.12});
+document.querySelectorAll('.ms-reveal').forEach(el=>obs.observe(el));
+
+renderCircadian();
+updateThermoDisplay();
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>

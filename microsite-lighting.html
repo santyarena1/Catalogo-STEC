@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — Zūm Lighting</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── Mesh Network ── */
+.mesh-canvas-wrap {
+  width:100%; aspect-ratio:16/9;
+  position:relative; border-radius:var(--ms-radius-lg);
+  border:1px solid var(--ms-border);
+  overflow:hidden; background:#080f18;
+}
+#meshCanvas { width:100%; height:100%; cursor:crosshair; }
+
+/* ── Scale Toggle ── */
+.scale-toggle {
+  display:flex; background:var(--ms-surface2);
+  border-radius:50px; padding:4px; width:fit-content;
+  margin:0 auto 32px;
+}
+.scale-btn {
+  padding:10px 28px; border-radius:50px; border:none;
+  font-size:.8rem; font-weight:600; color:var(--ms-text2);
+  background:transparent; cursor:pointer; transition:all .22s;
+}
+.scale-btn.active { background:var(--ms-accent); color:#fff; }
+
+/* ── Energy Bar ── */
+.energy-wrap { padding:28px; background:var(--ms-surface2); border-radius:var(--ms-radius); border:1px solid var(--ms-border); }
+.energy-bars { display:flex; gap:16px; align-items:flex-end; margin-top:20px; height:120px; }
+.energy-col { flex:1; display:flex; flex-direction:column; align-items:center; gap:8px; }
+.energy-bar-wrap { width:100%; flex:1; background:var(--ms-surface3); border-radius:6px 6px 0 0; overflow:hidden; display:flex; align-items:flex-end; }
+.energy-bar {
+  width:100%; border-radius:6px 6px 0 0;
+  transition:height .6s ease;
+}
+.energy-col-label { font-size:.7rem; color:var(--ms-text3); letter-spacing:.04em; text-align:center; }
+
+/* ── Device grid ── */
+.device-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:14px; }
+.device-card {
+  background:var(--ms-surface2); border:1px solid var(--ms-border);
+  border-radius:var(--ms-radius); padding:20px; text-align:center;
+  transition:all .22s; cursor:default;
+}
+.device-card:hover { border-color:var(--ms-border2); }
+.device-card-ico { font-size:1.6rem; margin-bottom:8px; }
+.device-card-name { font-size:.78rem; font-weight:600; color:var(--ms-text); }
+.device-card-desc { font-size:.7rem; color:var(--ms-text3); margin-top:4px; line-height:1.5; }
+
+/* ── Stat ── */
+.ms-stats { display:flex; gap:40px; flex-wrap:wrap; margin-top:40px; }
+.ms-stat { text-align:center; }
+.ms-stat-val { font-size:2.4rem; font-weight:700; color:var(--ms-accent); line-height:1; }
+.ms-stat-label { font-size:.75rem; color:var(--ms-text3); margin-top:6px; letter-spacing:.06em; text-transform:uppercase; }
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">Zūm Lighting</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 70% 60% at 60% 40%,rgba(0,157,199,.08),transparent),linear-gradient(160deg,#080f18 50%,#0a1520);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · Zūm Lighting &amp; Environmental</div>
+    <h1 class="ms-hero-title">Iluminación que<br><strong>se expande</strong><br>sin límites.</h1>
+    <p class="ms-hero-sub">Una red en malla inalámbrica que conecta desde una habitación hasta edificios enteros. Sin obras. Sin programación compleja. Sin puntos ciegos.</p>
+    <a href="#mesh-demo" class="ms-hero-cta">Ver la red en acción</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: red de nodos Zūm superpuesta sobre plano de una casa de lujo -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">💡</div>
+        <span>Red mesh Zūm · plano de planta con nodos activos · paleta teal sobre oscuro</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Zūm Lighting</div>
+    <h2 class="ms-sh-title">La inteligencia está <strong>en la red</strong>.</h2>
+    <p class="ms-sh-sub">No depende de un controlador central. Cada nodo piensa por sí mismo y colabora con el resto.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🕸️</div>
+      <div class="ms-card-title">Red mesh autosanante</div>
+      <div class="ms-card-text">2.4 GHz. Si un nodo falla, la red se reconfigura automáticamente. Sin puntos de falla únicos.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📡</div>
+      <div class="ms-card-title">32.000 dispositivos</div>
+      <div class="ms-card-text">Desde una habitación hasta un edificio completo. La misma plataforma, la misma app, sin límites artificiales.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">⚡</div>
+      <div class="ms-card-title">Pair and play</div>
+      <div class="ms-card-text">Los controles se emparejan con sensores y teclados con unos pocos toques. Sin programación en campo.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🌿</div>
+      <div class="ms-card-title">Ahorro energético real</div>
+      <div class="ms-card-text">Sensores de ocupación y luminosidad natural que reducen el consumo hasta un 40% sin sacrificar confort.</div>
+    </div>
+  </div>
+
+  <div class="ms-stats justify-center ms-reveal" style="justify-content:center; margin-top:60px;">
+    <div class="ms-stat"><div class="ms-stat-val">32K</div><div class="ms-stat-label">Dispositivos por red</div></div>
+    <div class="ms-stat"><div class="ms-stat-val">40%</div><div class="ms-stat-label">Ahorro energético</div></div>
+    <div class="ms-stat"><div class="ms-stat-val">2.4</div><div class="ms-stat-label">GHz mesh autosanante</div></div>
+    <div class="ms-stat"><div class="ms-stat-val">0</div><div class="ms-stat-label">Puntos de falla únicos</div></div>
+  </div>
+</section>
+
+<!-- MESH DEMO -->
+<div class="ms-section-dark">
+<section class="ms-section" id="mesh-demo">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Demo interactivo</div>
+    <h2 class="ms-sh-title">Hacé clic para <strong>agregar nodos</strong> a la red.</h2>
+    <p class="ms-sh-sub">Así de simple funciona Zūm. Cada dispositivo se conecta automáticamente al más cercano y refuerza la red.</p>
+  </div>
+
+  <div class="scale-toggle ms-reveal">
+    <button class="scale-btn active" onclick="setScale('room',this)">🏠 Por habitación</button>
+    <button class="scale-btn" onclick="setScale('building',this)">🏢 Edificio completo</button>
+  </div>
+
+  <div class="mesh-canvas-wrap ms-reveal">
+    <canvas id="meshCanvas"></canvas>
+    <div style="position:absolute;bottom:12px;right:16px;font-size:.7rem;color:var(--ms-text3);">Hacé clic en cualquier punto para agregar un nodo</div>
+    <div style="position:absolute;bottom:12px;left:16px;font-size:.7rem;color:var(--ms-text3);" id="mesh-count">Nodos activos: 5</div>
+  </div>
+
+  <div style="display:flex;gap:20px;justify-content:center;margin-top:20px;flex-wrap:wrap;" class="ms-reveal">
+    <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--ms-text2);"><div style="width:12px;height:12px;border-radius:50%;background:#009DC7;box-shadow:0 0 8px #009DC7;"></div>Controlador de carga</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--ms-text2);"><div style="width:12px;height:12px;border-radius:50%;background:#00e5a0;box-shadow:0 0 8px #00e5a0;"></div>Sensor de ocupación</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--ms-text2);"><div style="width:12px;height:12px;border-radius:50%;background:#FFD700;box-shadow:0 0 8px #FFD70080;"></div>Keypad</div>
+    <div style="display:flex;align-items:center;gap:8px;font-size:.76rem;color:var(--ms-text2);"><div style="width:12px;height:12px;border-radius:50%;background:#ff6b35;box-shadow:0 0 8px #ff6b3580;"></div>Hub Zūm</div>
+  </div>
+</section>
+</div>
+
+<!-- ENERGY SAVINGS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-grid-2">
+    <div>
+      <div class="ms-sh-label">Eficiencia energética</div>
+      <h2 class="ms-sh-title" style="text-align:left;">Ilumina solo <strong>donde hay personas</strong>.</h2>
+      <div class="ms-divider"></div>
+      <p style="font-size:.88rem;color:var(--ms-text2);line-height:1.75;margin-bottom:28px;">Los sensores de ocupación detectan presencia en tiempo real. La luz natural del exterior ajusta automáticamente la intensidad interior. El ahorro ocurre solo, sin que nadie tenga que acordarse de apagar.</p>
+      <div class="ms-ctrl">
+        <div class="ms-ctrl-ico">☀️</div>
+        <div class="ms-ctrl-name">Luz natural</div>
+        <input class="ms-ctrl-range" type="range" min="0" max="100" value="60" oninput="updateEnergy(this.value)">
+        <span class="ms-ctrl-val" id="daylight-val">60%</span>
+      </div>
+      <div class="ms-ctrl">
+        <div class="ms-ctrl-ico">🚶</div>
+        <div class="ms-ctrl-name">Ocupación</div>
+        <input class="ms-ctrl-range" type="range" min="0" max="100" value="75" oninput="updateOccupancy(this.value)">
+        <span class="ms-ctrl-val" id="occ-val">75%</span>
+      </div>
+    </div>
+    <div>
+      <div class="energy-wrap">
+        <div class="ms-config-label">Consumo estimado mensual (kWh)</div>
+        <div class="energy-bars" id="energy-bars">
+          <div class="energy-col">
+            <div class="energy-bar-wrap"><div class="energy-bar" id="bar-sin" style="height:100%;background:rgba(255,100,100,.5);"></div></div>
+            <div class="energy-col-label">Sin Zūm</div>
+          </div>
+          <div class="energy-col">
+            <div class="energy-bar-wrap"><div class="energy-bar" id="bar-con" style="height:62%;background:var(--ms-accent);"></div></div>
+            <div class="energy-col-label">Con Zūm</div>
+          </div>
+        </div>
+        <div style="text-align:center;margin-top:16px;">
+          <span style="font-size:1.6rem;font-weight:700;color:var(--ms-accent);" id="saving-pct">38%</span>
+          <span style="font-size:.8rem;color:var(--ms-text2);margin-left:8px;">de ahorro estimado</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DEVICES -->
+<div class="ms-section-dark">
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Catálogo de dispositivos</div>
+    <h2 class="ms-sh-title">Todo lo que <strong>necesitás</strong> en una red.</h2>
+  </div>
+  <div class="device-grid">
+    <div class="device-card">
+      <div class="device-card-ico">🔌</div>
+      <div class="device-card-name">Controladores de carga</div>
+      <div class="device-card-desc">Dimmers y switches para cualquier tipo de carga y cableado</div>
+    </div>
+    <div class="device-card">
+      <div class="device-card-ico">📟</div>
+      <div class="device-card-name">Keypads Zūm</div>
+      <div class="device-card-desc">Tamaño estándar decorador, compatible con cualquier infraestructura existente</div>
+    </div>
+    <div class="device-card">
+      <div class="device-card-ico">👁️</div>
+      <div class="device-card-name">Sensores de ocupación</div>
+      <div class="device-card-desc">Detección de presencia y luminosidad natural para automatización inteligente</div>
+    </div>
+    <div class="device-card">
+      <div class="device-card-ico">🖥️</div>
+      <div class="device-card-name">Hub de gestión</div>
+      <div class="device-card-desc">Punto de integración con Crestron Home para control unificado</div>
+    </div>
+    <div class="device-card">
+      <div class="device-card-ico">🔆</div>
+      <div class="device-card-name">Sensores de luz</div>
+      <div class="device-card-desc">Medición precisa de iluminación para ajuste dinámico circadiano</div>
+    </div>
+    <div class="device-card">
+      <div class="device-card-ico">📱</div>
+      <div class="device-card-name">App Crestron Home</div>
+      <div class="device-card-desc">Control completo desde smartphone o tablet, sin limitaciones</div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- GALLERY -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Galería de instalaciones</div>
+    <h2 class="ms-sh-title">Cada espacio, <strong>perfectamente iluminado</strong>.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏠</div><span>Residencia · living con iluminación por escenas · render nocturno</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏢</div><span>Edificio de oficinas · red Zūm completa · 200+ dispositivos</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🍽️</div><span>Restaurant de lujo · iluminación circadiana · zona de degustación</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<div class="ms-section-dark">
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">Ecosistema Crestron Home</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">Zūm es la <strong>base luminosa</strong> de todo el sistema.</h2>
+  <p class="ms-sh-sub">La iluminación Zūm se activa con cada escena: al decir "Cine", Zūm atenúa mientras las persianas bajan y el audio sube.</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Zūm Lighting</span>
+    <span class="ms-chip">Keypads Horizon</span>
+    <span class="ms-chip">Persianas QMT</span>
+    <span class="ms-chip">Audio DM NAX</span>
+    <span class="ms-chip">Termostatos Horizon</span>
+    <span class="ms-chip">Cerraduras Yale</span>
+    <span class="ms-chip">Escenas automáticas</span>
+  </div>
+</div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">Zūm · Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">Iluminación inteligente,<br><strong>sin compromisos</strong>.</h2>
+    <p class="ms-cta-sub">Desde una sola habitación hasta el edificio entero. Escalable siempre, sin reiniciar desde cero.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Solicitar demostración →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: sala de estar moderna con iluminación tenue y armoniosa, noche -->
+      <div class="ms-img-ph" style="height:260px;border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🌙</div>
+        <span>Living de lujo · iluminación circadiana nocturna · tonos cálidos · Zūm</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3);text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+/* ── Mesh Canvas ── */
+const canvas = document.getElementById('meshCanvas');
+const ctx = canvas.getContext('2d');
+let nodes = [];
+let scale = 'room';
+const NODE_TYPES = [
+  { color:'#009DC7', glow:'rgba(0,157,199,.6)', label:'Carga' },
+  { color:'#00e5a0', glow:'rgba(0,229,160,.6)', label:'Sensor' },
+  { color:'#FFD700', glow:'rgba(255,215,0,.5)', label:'Keypad' },
+  { color:'#ff6b35', glow:'rgba(255,107,53,.5)', label:'Hub' },
+];
+
+function resizeCanvas() {
+  const wrap = canvas.parentElement;
+  canvas.width  = wrap.clientWidth;
+  canvas.height = wrap.clientHeight;
+  drawMesh();
+}
+
+function initNodes() {
+  nodes = [];
+  const w = canvas.width, h = canvas.height;
+  const defaults = scale === 'room'
+    ? [[.2,.3],[.5,.2],[.8,.35],[.3,.7],[.65,.65]]
+    : [[.1,.2],[.3,.15],[.55,.2],[.8,.18],[.15,.5],[.4,.45],[.7,.5],[.9,.4],[.2,.75],[.5,.7],[.75,.78]];
+  defaults.forEach((pos,i) => {
+    nodes.push({ x:pos[0]*w, y:pos[1]*h, type:i%NODE_TYPES.length, r:8 });
+  });
+}
+
+function drawMesh() {
+  if(!canvas.width) return;
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  const maxDist = scale === 'room' ? canvas.width*.45 : canvas.width*.3;
+
+  // connections
+  for(let i=0;i<nodes.length;i++) {
+    for(let j=i+1;j<nodes.length;j++) {
+      const dx=nodes[i].x-nodes[j].x, dy=nodes[i].y-nodes[j].y;
+      const d=Math.sqrt(dx*dx+dy*dy);
+      if(d<maxDist) {
+        ctx.beginPath();
+        ctx.moveTo(nodes[i].x,nodes[i].y);
+        ctx.lineTo(nodes[j].x,nodes[j].y);
+        ctx.strokeStyle=`rgba(0,157,199,${.5-d/maxDist*.4})`;
+        ctx.lineWidth=1;
+        ctx.stroke();
+      }
+    }
+  }
+
+  // nodes
+  nodes.forEach(n => {
+    const t = NODE_TYPES[n.type];
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r*1.8,0,Math.PI*2);
+    const grd = ctx.createRadialGradient(n.x,n.y,0,n.x,n.y,n.r*1.8);
+    grd.addColorStop(0,t.glow);
+    grd.addColorStop(1,'transparent');
+    ctx.fillStyle=grd;
+    ctx.fill();
+
+    ctx.beginPath();
+    ctx.arc(n.x,n.y,n.r,0,Math.PI*2);
+    ctx.fillStyle=t.color;
+    ctx.fill();
+  });
+
+  document.getElementById('mesh-count').textContent = `Nodos activos: ${nodes.length}`;
+}
+
+canvas.addEventListener('click', e => {
+  const rect = canvas.getBoundingClientRect();
+  const x=(e.clientX-rect.left)*(canvas.width/rect.width);
+  const y=(e.clientY-rect.top)*(canvas.height/rect.height);
+  const typeIdx=Math.floor(Math.random()*NODE_TYPES.length);
+  nodes.push({x,y,type:typeIdx,r:8});
+  drawMesh();
+});
+
+function setScale(s, btn) {
+  scale=s;
+  document.querySelectorAll('.scale-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  resizeCanvas();
+  initNodes();
+  drawMesh();
+}
+
+/* ── Energy Bars ── */
+let daylight=60, occupancy=75;
+function updateEnergy(v) {
+  daylight=parseInt(v);
+  document.getElementById('daylight-val').textContent=v+'%';
+  recalcEnergy();
+}
+function updateOccupancy(v) {
+  occupancy=parseInt(v);
+  document.getElementById('occ-val').textContent=v+'%';
+  recalcEnergy();
+}
+function recalcEnergy() {
+  const saving = Math.round((daylight*.25 + occupancy*.15));
+  const pct = Math.min(saving, 45);
+  const barH = Math.round(100 - pct);
+  document.getElementById('bar-con').style.height = barH + '%';
+  document.getElementById('saving-pct').textContent = pct + '%';
+}
+
+/* ── Scroll Reveal ── */
+const obs = new IntersectionObserver(entries => entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:.12});
+document.querySelectorAll('.ms-reveal').forEach(el=>obs.observe(el));
+
+/* ── Init ── */
+window.addEventListener('resize', () => { resizeCanvas(); drawMesh(); });
+setTimeout(() => { resizeCanvas(); initNodes(); drawMesh(); }, 100);
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>

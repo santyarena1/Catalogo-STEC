@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — DM NAX Audio</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── EQ Bars ── */
+.eq-wrap { display:flex; gap:4px; align-items:flex-end; height:60px; padding:0 8px; }
+.eq-bar { flex:1; border-radius:2px 2px 0 0; background:var(--ms-accent); min-height:4px; transition:height .1s; }
+
+/* ── Floor Plan ── */
+.floor-plan {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  grid-template-rows:repeat(2,1fr);
+  gap:12px; aspect-ratio:16/9;
+}
+.fp-room {
+  background:var(--ms-surface2); border:1px solid var(--ms-border);
+  border-radius:var(--ms-radius); padding:16px 12px;
+  cursor:pointer; transition:all .22s; position:relative; overflow:hidden;
+  display:flex; flex-direction:column; justify-content:space-between;
+}
+.fp-room.on { border-color:var(--ms-accent); background:rgba(0,157,199,.08); }
+.fp-room-name { font-size:.78rem; font-weight:600; color:var(--ms-text2); }
+.fp-room.on .fp-room-name { color:var(--ms-accent); }
+.fp-room-icon { font-size:1.4rem; margin-bottom:4px; }
+.fp-room-vol { font-size:.68rem; color:var(--ms-text3); }
+.fp-room.on .fp-room-vol { color:var(--ms-text2); }
+.fp-room-eq { position:absolute; bottom:0; left:0; right:0; height:16px; }
+.fp-eq-bar { width:8.33%; height:100%; float:left; background:var(--ms-accent); opacity:.4; }
+
+/* ── Source Selector ── */
+.source-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(110px,1fr)); gap:12px; }
+.source-card {
+  background:var(--ms-surface2); border:1px solid var(--ms-border);
+  border-radius:var(--ms-radius); padding:20px 12px;
+  text-align:center; cursor:pointer; transition:all .22s;
+}
+.source-card.active { border-color:var(--ms-accent); background:var(--ms-accent-dim); }
+.source-card:hover { border-color:var(--ms-border2); }
+.source-ico { font-size:1.6rem; margin-bottom:8px; }
+.source-name { font-size:.76rem; font-weight:600; color:var(--ms-text); }
+.source-card.active .source-name { color:var(--ms-accent); }
+
+/* ── Now Playing ── */
+.now-playing {
+  background:var(--ms-surface2); border:1px solid var(--ms-border);
+  border-radius:var(--ms-radius-lg); padding:24px 28px;
+  display:flex; align-items:center; gap:20px;
+}
+.np-cover {
+  width:64px; height:64px; border-radius:10px;
+  background:linear-gradient(135deg,var(--ms-accent),#005577);
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  font-size:1.6rem;
+}
+.np-info { flex:1; min-width:0; }
+.np-track { font-size:.88rem; font-weight:600; color:var(--ms-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.np-artist { font-size:.76rem; color:var(--ms-text3); margin-top:2px; }
+.np-progress { margin-top:10px; height:3px; background:var(--ms-surface3); border-radius:2px; overflow:hidden; }
+.np-bar { height:100%; background:var(--ms-accent); width:38%; border-radius:2px; animation:np-progress 30s linear infinite; }
+@keyframes np-progress { from{width:5%} to{width:100%} }
+
+.np-controls { display:flex; gap:12px; align-items:center; }
+.np-btn {
+  width:36px; height:36px; border-radius:50%; border:1px solid var(--ms-border);
+  background:transparent; color:var(--ms-text2);
+  cursor:pointer; transition:all .22s; display:flex; align-items:center; justify-content:center;
+  font-size:.9rem;
+}
+.np-btn.play { width:44px; height:44px; background:var(--ms-accent); border-color:var(--ms-accent); color:#fff; font-size:1rem; }
+.np-btn:hover { border-color:var(--ms-accent); color:var(--ms-accent); }
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">DM NAX Audio</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 70% 60% at 40% 60%,rgba(0,157,199,.07),transparent),linear-gradient(160deg,#080f18 50%,#080e18);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · DM NAX Audio</div>
+    <h1 class="ms-hero-title">Música que<br>fluye por<br><strong>cada ambiente</strong>.</h1>
+    <p class="ms-hero-sub">Audio IP de alta fidelidad. Cualquier fuente, en cualquier espacio, al instante. Sin cables extras, sin amplificadores visibles, sin límites de escala.</p>
+    <a href="#zonas" class="ms-hero-cta">Explorar zonas de audio</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: altavoz PoE montado en techo de living moderno, planta verde visible, luz cálida -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">🔊</div>
+        <span>Altavoz PoE DM NAX · techo de living moderno · iluminación cálida</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">DM NAX · Audio sobre IP</div>
+    <h2 class="ms-sh-title">Alta fidelidad. <strong>Distribuida.</strong> Sin límites.</h2>
+    <p class="ms-sh-sub">DM NAX usa la red IP existente para llevar audio de estudio a cada rincón del hogar o el edificio.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🌐</div>
+      <div class="ms-card-title">Audio sobre IP</div>
+      <div class="ms-card-text">Usa la red Ethernet existente. Sin cableado de audio dedicado. Cada zona es un dispositivo de red.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">⚡</div>
+      <div class="ms-card-title">Altavoces PoE</div>
+      <div class="ms-card-text">Un solo cable de red lleva datos y alimentación al altavoz. Escalable infinitamente sin sumar infraestructura.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🎛️</div>
+      <div class="ms-card-title">DSP distribuido</div>
+      <div class="ms-card-text">Procesamiento de señal en cada nodo. Ecualización, mezcla y protección inteligente del altavoz por zona.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🔗</div>
+      <div class="ms-card-title">AES-67 &amp; Dante®</div>
+      <div class="ms-card-text">Compatible con los estándares profesionales de audio en red. Se integra con sistemas de estudio existentes.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ZONE MAP + NOW PLAYING -->
+<div class="ms-section-dark">
+<section class="ms-section" id="zonas">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Control por zonas</div>
+    <h2 class="ms-sh-title">Hacé clic en una habitación para <strong>activar el audio</strong>.</h2>
+    <p class="ms-sh-sub">Cada zona tiene su propio volumen, su propia fuente y su propio ambiente sonoro. Coordinadas o independientes, según el momento.</p>
+  </div>
+
+  <div class="ms-grid-2" style="align-items:start; gap:40px;">
+    <div>
+      <div class="floor-plan ms-reveal" id="floor-plan">
+        <div class="fp-room on" data-room="living" onclick="toggleRoom(this)">
+          <div><div class="fp-room-icon">🛋️</div><div class="fp-room-name">Living</div></div>
+          <div class="fp-room-vol" id="vol-living">🎵 Jazz · 65%</div>
+          <div class="fp-room-eq" id="eq-living"></div>
+        </div>
+        <div class="fp-room" data-room="cocina" onclick="toggleRoom(this)">
+          <div><div class="fp-room-icon">🍳</div><div class="fp-room-name">Cocina</div></div>
+          <div class="fp-room-vol" id="vol-cocina">Sin audio</div>
+        </div>
+        <div class="fp-room on" data-room="dormitorio" onclick="toggleRoom(this)">
+          <div><div class="fp-room-icon">🛏️</div><div class="fp-room-name">Dormitorio</div></div>
+          <div class="fp-room-vol" id="vol-dormitorio">🎵 Ambient · 40%</div>
+          <div class="fp-room-eq" id="eq-dormitorio"></div>
+        </div>
+        <div class="fp-room" data-room="terraza" onclick="toggleRoom(this)">
+          <div><div class="fp-room-icon">🌿</div><div class="fp-room-name">Terraza</div></div>
+          <div class="fp-room-vol" id="vol-terraza">Sin audio</div>
+        </div>
+        <div class="fp-room" data-room="oficina" onclick="toggleRoom(this)">
+          <div><div class="fp-room-icon">💼</div><div class="fp-room-name">Oficina</div></div>
+          <div class="fp-room-vol" id="vol-oficina">Sin audio</div>
+        </div>
+        <div class="fp-room" data-room="bano" onclick="toggleRoom(this)">
+          <div><div class="fp-room-icon">🚿</div><div class="fp-room-name">Baño</div></div>
+          <div class="fp-room-vol" id="vol-bano">Sin audio</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="ms-reveal">
+      <!-- Source selector -->
+      <div class="ms-config-label" style="margin-bottom:12px;">Fuente de audio activa</div>
+      <div class="source-grid" id="source-grid">
+        <div class="source-card active" onclick="setSource(this,'Spotify','🎵','Pop & Jazz')">
+          <div class="source-ico">🎵</div><div class="source-name">Spotify</div>
+        </div>
+        <div class="source-card" onclick="setSource(this,'Apple Music','🎶','Playlist')">
+          <div class="source-ico">🎶</div><div class="source-name">Apple Music</div>
+        </div>
+        <div class="source-card" onclick="setSource(this,'TIDAL','🎼','Hi-Fi')">
+          <div class="source-ico">🎼</div><div class="source-name">TIDAL</div>
+        </div>
+        <div class="source-card" onclick="setSource(this,'Bluetooth','📱','Dispositivo')">
+          <div class="source-ico">📱</div><div class="source-name">Bluetooth</div>
+        </div>
+        <div class="source-card" onclick="setSource(this,'Analógico','🎸','Entrada XLR')">
+          <div class="source-ico">🎸</div><div class="source-name">Analógico</div>
+        </div>
+        <div class="source-card" onclick="setSource(this,'USB','💾','Archivo local')">
+          <div class="source-ico">💾</div><div class="source-name">USB</div>
+        </div>
+      </div>
+
+      <!-- Now playing -->
+      <div class="now-playing ms-reveal" style="margin-top:24px;" id="now-playing">
+        <div class="np-cover" id="np-cover">🎵</div>
+        <div class="np-info">
+          <div class="np-track" id="np-track">Autumn Leaves</div>
+          <div class="np-artist" id="np-artist">Spotify · Jazz Collection</div>
+          <div class="np-progress"><div class="np-bar" id="np-bar"></div></div>
+        </div>
+        <div class="np-controls">
+          <button class="np-btn">⏮</button>
+          <button class="np-btn play" id="play-btn" onclick="togglePlay(this)">⏸</button>
+          <button class="np-btn">⏭</button>
+        </div>
+      </div>
+
+      <!-- EQ Visualization -->
+      <div style="margin-top:20px; background:var(--ms-surface2); border:1px solid var(--ms-border); border-radius:var(--ms-radius); padding:16px;">
+        <div class="ms-config-label" style="margin-bottom:8px;">Visualizador — <span id="active-zones-count">2</span> zonas activas</div>
+        <div class="eq-wrap" id="main-eq"></div>
+      </div>
+
+      <!-- Zone volume control -->
+      <div style="margin-top:16px;">
+        <div class="ms-config-label" style="margin-bottom:12px;">Volumen por zona activa</div>
+        <div id="zone-volumes"></div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- DEVICES -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Ecosistema DM NAX</div>
+    <h2 class="ms-sh-title">Cada dispositivo tiene <strong>su rol</strong>.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:20px;">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📻</div>
+      <div class="ms-card-title">Edge Devices</div>
+      <div class="ms-card-text">Conectan fuentes analógicas, Bluetooth, XLR o USB al ecosistema IP. El puente entre el mundo analógico y la red.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🔌</div>
+      <div class="ms-card-title">Amplificadores DSP</div>
+      <div class="ms-card-text">Procesamiento de audio distribuido con perfiles preconfigurados y protección inteligente del sistema de altavoces.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📡</div>
+      <div class="ms-card-title">Altavoces PoE</div>
+      <div class="ms-card-text">Un cable. Sin amplificador externo. Escalable sin límites: desde 2 zonas hasta cientos, en la misma red.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<div class="ms-section-dark">
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Instalaciones DM NAX</div>
+    <h2 class="ms-sh-title">El sonido <strong>invisible</strong> que lo llena todo.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏠</div><span>Living con altavoces PoE en techo · música ambiente · personas conversando</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🌿</div><span>Terraza outdoor · altavoces resistentes · fiesta al atardecer</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🏢</div><span>Rack DM NAX · rack room · amplificadores y edge devices · instalación profesional</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ECOSYSTEM -->
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">Integración con el hogar</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">La música que <strong>acompaña</strong> cada momento.</h2>
+  <p class="ms-sh-sub">Al activar la escena "Reunión", la música sube en living y cocina. Al encender el cine, el sistema de audio del home theater toma el control automáticamente.</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Audio DM NAX</span>
+    <span class="ms-chip">Keypads Horizon</span>
+    <span class="ms-chip">Iluminación Zūm</span>
+    <span class="ms-chip">Persianas</span>
+    <span class="ms-chip">Escenas automáticas</span>
+    <span class="ms-chip">Control por voz</span>
+    <span class="ms-chip">App Crestron Home</span>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">DM NAX · Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">Tu hogar merece<br>un <strong>sonido sin cables</strong>.</h2>
+    <p class="ms-cta-sub">Diseñamos la solución de audio perfecta para tu espacio, desde una sola habitación hasta el edificio completo.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Diseñar mi sistema de audio →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: familia en living escuchando música, altavoces en techo, ambiente cálido -->
+      <div class="ms-img-ph" style="height:260px;border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🎶</div>
+        <span>Familia disfrutando música en living · luz cálida · altavoces en techo · atmósfera relajada</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3);text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+/* ── EQ Bars ── */
+let eqInterval = null;
+let playing = true;
+
+function renderEQ(containerId, bands) {
+  const el = document.getElementById(containerId);
+  if(!el) return;
+  el.innerHTML = '';
+  for(let i=0;i<bands;i++) {
+    const bar = document.createElement('div');
+    bar.className = 'eq-bar';
+    bar.style.height = (Math.random()*70+10)+'%';
+    el.appendChild(bar);
+  }
+}
+
+function animateEQ() {
+  if(!playing) return;
+  const mainEq = document.getElementById('main-eq');
+  if(!mainEq) return;
+  mainEq.querySelectorAll('.eq-bar').forEach(bar => {
+    bar.style.height = (Math.random()*80+5)+'%';
+  });
+  // animate room EQs
+  document.querySelectorAll('.fp-room.on').forEach(room => {
+    const eqEl = room.querySelector('.fp-room-eq');
+    if(eqEl) {
+      let html = '';
+      for(let i=0;i<12;i++) html += `<div class="fp-eq-bar" style="height:${Math.random()*100}%;"></div>`;
+      eqEl.innerHTML = html;
+    }
+  });
+}
+
+function togglePlay(btn) {
+  playing = !playing;
+  btn.textContent = playing ? '⏸' : '▶';
+  if(!playing) {
+    document.querySelectorAll('.eq-bar').forEach(b => b.style.height='4%');
+    document.querySelectorAll('.fp-eq-bar').forEach(b => b.style.height='0%');
+  }
+}
+
+/* ── Room Toggle ── */
+const roomData = {
+  living:     { label:'🎵 Jazz · 65%',    vol:65 },
+  cocina:     { label:'🎵 Jazz · 55%',    vol:55 },
+  dormitorio: { label:'🎵 Ambient · 40%', vol:40 },
+  terraza:    { label:'🎵 Pop · 70%',     vol:70 },
+  oficina:    { label:'🎵 Focus · 50%',   vol:50 },
+  bano:       { label:'🎵 Radio · 45%',   vol:45 },
+};
+
+function toggleRoom(el) {
+  const room = el.dataset.room;
+  const on = el.classList.toggle('on');
+  const volEl = document.getElementById('vol-'+room);
+  if(on) {
+    volEl.textContent = roomData[room].label;
+    renderRoomEQ(el);
+  } else {
+    volEl.textContent = 'Sin audio';
+    const eqEl = el.querySelector('.fp-room-eq');
+    if(eqEl) eqEl.innerHTML = '';
+  }
+  updateActiveCount();
+  renderVolumeControls();
+}
+
+function renderRoomEQ(roomEl) {
+  let eqEl = roomEl.querySelector('.fp-room-eq');
+  if(!eqEl) {
+    eqEl = document.createElement('div');
+    eqEl.className = 'fp-room-eq';
+    eqEl.id = 'eq-'+roomEl.dataset.room;
+    roomEl.appendChild(eqEl);
+  }
+}
+
+function updateActiveCount() {
+  const count = document.querySelectorAll('.fp-room.on').length;
+  document.getElementById('active-zones-count').textContent = count;
+}
+
+function renderVolumeControls() {
+  const wrap = document.getElementById('zone-volumes');
+  const rooms = document.querySelectorAll('.fp-room.on');
+  if(!rooms.length) { wrap.innerHTML = '<div style="font-size:.78rem;color:var(--ms-text3);">Ninguna zona activa. Hacé clic en una habitación.</div>'; return; }
+  wrap.innerHTML = [...rooms].map(r => {
+    const room = r.dataset.room;
+    const d = roomData[room];
+    return `<div class="ms-ctrl">
+      <div class="ms-ctrl-ico">${r.querySelector('.fp-room-icon').textContent}</div>
+      <div class="ms-ctrl-name" style="min-width:80px;">${r.querySelector('.fp-room-name').textContent}</div>
+      <input class="ms-ctrl-range" type="range" min="0" max="100" value="${d.vol}"
+        oninput="updateRoomVol('${room}',this.value)">
+      <span class="ms-ctrl-val" id="v-${room}">${d.vol}%</span>
+    </div>`;
+  }).join('');
+}
+
+function updateRoomVol(room, val) {
+  roomData[room].vol = parseInt(val);
+  document.getElementById('v-'+room).textContent = val+'%';
+}
+
+/* ── Source ── */
+const sourceData = {
+  'Spotify':      { ico:'🎵', track:'Autumn Leaves',     artist:'Spotify · Jazz Collection' },
+  'Apple Music':  { ico:'🎶', track:'Golden Hour',        artist:'Apple Music · Playlist' },
+  'TIDAL':        { ico:'🎼', track:'Kind of Blue',       artist:'TIDAL HiFi · Miles Davis' },
+  'Bluetooth':    { ico:'📱', track:'Mi teléfono',        artist:'Conectado por Bluetooth' },
+  'Analógico':    { ico:'🎸', track:'Entrada XLR',        artist:'Señal analógica activa' },
+  'USB':          { ico:'💾', track:'playlist.m3u',       artist:'Reproducción local USB' },
+};
+
+function setSource(card, name) {
+  document.querySelectorAll('.source-card').forEach(c=>c.classList.remove('active'));
+  card.classList.add('active');
+  const d = sourceData[name];
+  document.getElementById('np-cover').textContent = d.ico;
+  document.getElementById('np-track').textContent = d.track;
+  document.getElementById('np-artist').textContent = d.artist;
+  document.getElementById('np-bar').style.animation = 'none';
+  setTimeout(()=>{ document.getElementById('np-bar').style.animation=''; },10);
+}
+
+/* ── Init ── */
+renderEQ('main-eq', 20);
+renderVolumeControls();
+eqInterval = setInterval(animateEQ, 120);
+
+const obs = new IntersectionObserver(entries => entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); }),{threshold:.12});
+document.querySelectorAll('.ms-reveal').forEach(el=>obs.observe(el));
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>

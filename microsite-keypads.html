@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — Keypads & Dimmers</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── Keypad Visual ── */
+.kp-device {
+  width:170px; position:relative;
+  border-radius:18px; padding:20px 14px;
+  box-shadow:0 32px 80px rgba(0,0,0,.75);
+  transition:background .35s ease;
+  display:flex; flex-direction:column; gap:8px;
+  margin:0 auto;
+}
+.kp-btn {
+  width:100%; padding:12px 14px;
+  border-radius:9px; border:none;
+  font-size:.72rem; font-weight:600; letter-spacing:.04em;
+  cursor:pointer; transition:all .2s;
+  display:flex; align-items:center; justify-content:space-between;
+  color:#e8edf3;
+}
+.kp-btn:hover { filter:brightness(1.15); }
+.kp-btn-led { width:6px; height:6px; border-radius:50%; background:rgba(255,255,255,.3); }
+.kp-btn-led.on { background:var(--ms-accent); box-shadow:0 0 6px var(--ms-accent); }
+.kp-label {
+  font-size:.7rem; color:var(--ms-text3); text-align:center; margin-top:8px;
+  letter-spacing:.08em; text-transform:uppercase;
+}
+.kp-backlight-ring {
+  position:absolute; inset:-8px; border-radius:24px;
+  border:2px solid transparent; pointer-events:none;
+  transition:border-color .35s;
+}
+
+/* ── Cameo buttons ── */
+.cameo-wrap { display:flex; align-items:center; justify-content:center; gap:24px; flex-wrap:wrap; }
+.cameo-device {
+  width:120px; border-radius:14px; padding:16px 10px;
+  background:#1e1e1e; box-shadow:0 20px 60px rgba(0,0,0,.7);
+  display:flex; flex-direction:column; gap:6px;
+  transition:all .25s;
+}
+.cameo-rocker {
+  width:100%; height:38px; border-radius:7px; border:none;
+  background:rgba(255,255,255,.06);
+  cursor:pointer; transition:background .2s;
+  position:relative;
+}
+.cameo-rocker::after {
+  content:''; position:absolute; left:50%; top:50%; transform:translate(-50%,-50%);
+  width:30%; height:2px; background:rgba(255,255,255,.2); border-radius:1px;
+}
+.cameo-rocker:hover { background:rgba(0,157,199,.15); }
+.cameo-color-label {
+  font-size:.68rem; color:var(--ms-text3); text-align:center;
+  margin-top:6px; letter-spacing:.06em; text-transform:uppercase;
+}
+
+/* ── EQ-style backlight preview ── */
+.bl-preview {
+  width:100%; height:8px; border-radius:4px;
+  background:var(--ms-accent);
+  transition:background .3s;
+  box-shadow:0 0 12px var(--ms-accent);
+  margin:12px 0;
+}
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<!-- NAV -->
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">Keypads &amp; Dimmers</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 80% 60% at 70% 50%,rgba(0,157,199,.1),transparent),linear-gradient(160deg,#080f18 45%,#0c1a28);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · Keypads &amp; Dimmers</div>
+    <h1 class="ms-hero-title">El tacto<br>que <strong>transforma</strong><br>el espacio.</h1>
+    <p class="ms-hero-sub">Cada presión activa una experiencia. Iluminación, clima, música y escenas desde un único punto de contacto diseñado para fundirse con la arquitectura.</p>
+    <a href="#configurador" class="ms-hero-cta">Explorar acabados</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: keypad Horizon en acabado brushed nickel, montado en pared de mármol blanco -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">⌨️</div>
+        <span>Keypad Horizon · acabado brushed nickel · pared de mármol</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BENEFITS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Experiencia táctil premium</div>
+    <h2 class="ms-sh-title">Diseñado para <strong>percibirse</strong> diferente.</h2>
+    <p class="ms-sh-sub">Cada detalle —desde el recorrido del botón hasta la temperatura del material— comunica calidad antes de que la luz responda.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">✋</div>
+      <div class="ms-card-title">Respuesta táctil premium</div>
+      <div class="ms-card-text">Botón de pieza única ligeramente sobresaliente. El clic se siente deliberado, seguro y satisfactorio.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🎨</div>
+      <div class="ms-card-title">Acabados sin compromiso</div>
+      <div class="ms-card-text">Texturizados, cristal y metales: negro, blanco, almendra, brushed brass, dark nickel y más. Cada uno pensado para combinarse con la decoración existente.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">💡</div>
+      <div class="ms-card-title">Retroiluminación RGB viva</div>
+      <div class="ms-card-text">16 millones de colores. Modos dim-to-warm y circadiano. La luz del keypad se adapta a la hora del día de forma completamente automática.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🏠</div>
+      <div class="ms-card-title">Control todo en uno</div>
+      <div class="ms-card-text">Persianas, clima, cerraduras y entretenimiento. Un único dispositivo. Sin remotes adicionales sobre las mesas.</div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT TABS -->
+<div class="ms-section-dark">
+<section class="ms-section" id="configurador">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Líneas de producto</div>
+    <h2 class="ms-sh-title">Elige tu <strong>Keypad</strong> Crestron.</h2>
+  </div>
+
+  <div class="ms-tabs" role="tablist">
+    <button class="ms-tab active" onclick="switchKpTab('horizon',this)">Horizon</button>
+    <button class="ms-tab" onclick="switchKpTab('cameo',this)">Cameo</button>
+    <button class="ms-tab" onclick="switchKpTab('partners',this)">Partners</button>
+  </div>
+
+  <!-- HORIZON PANEL -->
+  <div class="ms-panel active" id="kp-horizon">
+    <div class="ms-config">
+      <div>
+        <div class="ms-config-label">Modelo</div>
+        <div class="ms-config-title">Horizon Keypad</div>
+        <div class="ms-divider"></div>
+        <div class="ms-config-desc">Diseño contemporáneo sin bisel visible. Compatible con estándar decorador. Grabados e iconos personalizados incluidos en el precio.</div>
+
+        <div style="margin-top:28px;">
+          <div class="ms-config-label">Acabado</div>
+          <div class="ms-swatches" id="hz-swatches">
+            <div class="ms-swatch active" style="background:#1a1a1a;" data-name="Negro texturizado" data-bg="#1a1a1a" data-btn="rgba(255,255,255,.06)" onclick="setHzFinish(this)"></div>
+            <div class="ms-swatch" style="background:#f0ede8;" data-name="Blanco texturizado" data-bg="#f0ede8" data-btn="rgba(0,0,0,.06)" onclick="setHzFinish(this)"></div>
+            <div class="ms-swatch" style="background:#d4c9a8;" data-name="Almendra" data-bg="#c8b98a" data-btn="rgba(0,0,0,.07)" onclick="setHzFinish(this)"></div>
+            <div class="ms-swatch" style="background:linear-gradient(135deg,#111,#222); border:1px solid rgba(255,255,255,.1)" data-name="Cristal negro" data-bg="#111" data-btn="rgba(255,255,255,.04)" onclick="setHzFinish(this)"></div>
+            <div class="ms-swatch" style="background:linear-gradient(135deg,#e8e4e0,#f5f2ee); border:1px solid rgba(0,0,0,.1)" data-name="Cristal blanco" data-bg="#e8e4e0" data-btn="rgba(0,0,0,.04)" onclick="setHzFinish(this)"></div>
+            <div class="ms-swatch" style="background:linear-gradient(135deg,#c8a96e,#b8924a);" data-name="Brushed Brass" data-bg="#2a1f0e" data-btn="rgba(200,169,110,.12)" onclick="setHzFinish(this)"></div>
+            <div class="ms-swatch" style="background:linear-gradient(135deg,#3a3f47,#2d3239);" data-name="Dark Nickel" data-bg="#1e2228" data-btn="rgba(255,255,255,.06)" onclick="setHzFinish(this)"></div>
+          </div>
+          <div class="ms-swatch-name" id="hz-finish-name">Negro texturizado</div>
+        </div>
+
+        <div style="margin-top:28px;">
+          <div class="ms-config-label">Retroiluminación</div>
+          <div class="bl-preview" id="hz-bl-preview"></div>
+          <div class="ms-ctrl" style="padding:0;">
+            <div class="ms-ctrl-ico">💡</div>
+            <div class="ms-ctrl-name">Color (Hue)</div>
+            <input class="ms-ctrl-range" type="range" min="0" max="360" value="195" oninput="setHzBacklight(this.value)" style="background:linear-gradient(90deg,#f00,#ff0,#0f0,#0ff,#00f,#f0f,#f00)">
+            <span class="ms-ctrl-val" id="hz-bl-val">Cyan</span>
+          </div>
+        </div>
+
+        <div style="margin-top:24px;">
+          <div class="ms-config-label">Escenas de demostración</div>
+          <div class="ms-scenes">
+            <button class="ms-scene-btn active" onclick="setHzScene(this,'#009DC7','Noche')">🌙 Noche</button>
+            <button class="ms-scene-btn" onclick="setHzScene(this,'#FF6B35','Cine')">🎬 Cine</button>
+            <button class="ms-scene-btn" onclick="setHzScene(this,'#FFD700','Amanecer')">🌅 Amanecer</button>
+            <button class="ms-scene-btn" onclick="setHzScene(this,'#7B68EE','Reunión')">💼 Reunión</button>
+            <button class="ms-scene-btn" onclick="setHzScene(this,'rgba(255,255,255,0)','Off')">⭕ Off</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="ms-preview" id="hz-preview" style="background:#1a1a1a;">
+        <div id="hz-kp" class="kp-device" style="background:#1a1a1a;">
+          <div class="kp-btn" style="background:rgba(255,255,255,.06);" onclick="toggleKpBtn(this)"><span>Luces</span><div class="kp-btn-led on"></div></div>
+          <div class="kp-btn" style="background:rgba(255,255,255,.06);" onclick="toggleKpBtn(this)"><span>Persianas</span><div class="kp-btn-led"></div></div>
+          <div class="kp-btn" style="background:rgba(255,255,255,.06);" onclick="toggleKpBtn(this)"><span>Música</span><div class="kp-btn-led"></div></div>
+          <div class="kp-btn" style="background:rgba(255,255,255,.06);" onclick="toggleKpBtn(this)"><span>Clima</span><div class="kp-btn-led"></div></div>
+          <div class="kp-label" id="hz-kp-scene">Escena: Noche</div>
+          <div class="kp-backlight-ring" id="hz-ring" style="border-color:#009DC7; box-shadow:0 0 20px rgba(0,157,199,.3);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAMEO PANEL -->
+  <div class="ms-panel" id="kp-cameo">
+    <div class="ms-config">
+      <div>
+        <div class="ms-config-label">Modelo</div>
+        <div class="ms-config-title">Cameo Keypad</div>
+        <div class="ms-divider"></div>
+        <div class="ms-config-desc">Diseño ergonómico sin bisel, compatible con estándar decorador. Hasta 138 configuraciones de botones con piezas reemplazables en campo.</div>
+
+        <div style="margin-top:28px;">
+          <div class="ms-config-label">Color del dispositivo</div>
+          <div class="ms-swatches" id="cam-swatches">
+            <div class="ms-swatch active" style="background:#1a1a1a;" data-color="#1a1a1a" data-name="Negro" onclick="setCameoColor(this)"></div>
+            <div class="ms-swatch" style="background:#f0ede8; border:1px solid rgba(0,0,0,.1);" data-color="#e8e4e0" data-name="Blanco" onclick="setCameoColor(this)"></div>
+            <div class="ms-swatch" style="background:#c8b98a;" data-color="#b8a870" data-name="Almendra" onclick="setCameoColor(this)"></div>
+            <div class="ms-swatch" style="background:#3a3f47;" data-color="#2d3239" data-name="Dark Nickel" onclick="setCameoColor(this)"></div>
+          </div>
+          <div class="ms-swatch-name" id="cam-color-name">Negro</div>
+        </div>
+
+        <div style="margin-top:28px;">
+          <div class="ms-config-label">Cantidad de botones</div>
+          <div class="ms-scenes" style="gap:8px;">
+            <button class="ms-scene-btn" onclick="setCameoButtons(this,2)">2</button>
+            <button class="ms-scene-btn active" onclick="setCameoButtons(this,4)">4</button>
+            <button class="ms-scene-btn" onclick="setCameoButtons(this,6)">6</button>
+            <button class="ms-scene-btn" onclick="setCameoButtons(this,8)">8</button>
+          </div>
+        </div>
+
+        <div style="margin-top:24px; padding:16px; background:var(--ms-accent-dim); border-radius:var(--ms-radius); border:1px solid var(--ms-border2);">
+          <div class="ms-config-label" style="margin:0 0 6px;">Características exclusivas</div>
+          <ul style="font-size:.8rem; color:var(--ms-text2); line-height:2; list-style:none; padding:0;">
+            <li>✓ Retroiluminación RGB · 16M colores</li>
+            <li>✓ Sensor de luz ambiental adaptativo</li>
+            <li>✓ Grabados e iconos personalizados</li>
+            <li>✓ Opción "no neutral" para retrofit</li>
+            <li>✓ Rockers laterales opcionales</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="ms-preview" id="cam-preview" style="background:#0d1117;">
+        <div class="cameo-wrap" id="cam-device-wrap">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PARTNERS PANEL -->
+  <div class="ms-panel" id="kp-partners">
+    <div class="ms-sh" style="margin-bottom:40px;">
+      <div class="ms-sh-sub">Diseño italiano y europeo con tecnología Crestron. Cada partner combina su identidad estética propia con el ecosistema centralizado de Crestron Home.</div>
+    </div>
+    <div class="ms-partners">
+      <div class="ms-partner">
+        <div class="ms-partner-ico">⬛</div>
+        <div class="ms-partner-name">Black Nova</div>
+        <div class="ms-partner-sub">Italia · Minimalismo extremo</div>
+      </div>
+      <div class="ms-partner">
+        <div class="ms-partner-ico">🏛️</div>
+        <div class="ms-partner-name">Arkadia</div>
+        <div class="ms-partner-sub">Europa · Diseño clásico contemporáneo</div>
+      </div>
+      <div class="ms-partner">
+        <div class="ms-partner-ico">💎</div>
+        <div class="ms-partner-name">Vitrea</div>
+        <div class="ms-partner-sub">Israel · Cristal retroiluminado</div>
+      </div>
+      <div class="ms-partner">
+        <div class="ms-partner-ico">🔷</div>
+        <div class="ms-partner-name">Rhombus Europe</div>
+        <div class="ms-partner-sub">Europa · Geométrico y premium</div>
+      </div>
+      <div class="ms-partner">
+        <div class="ms-partner-ico">🌿</div>
+        <div class="ms-partner-name">Tyba</div>
+        <div class="ms-partner-sub">Europa · Diseño orgánico natural</div>
+      </div>
+    </div>
+    <div style="margin-top:40px; padding:28px; background:var(--ms-accent-dim); border-radius:var(--ms-radius); border:1px solid var(--ms-border2); text-align:center;">
+      <div class="ms-config-label">Todos integran de forma nativa con</div>
+      <div style="font-size:1.1rem; font-weight:600; color:var(--ms-accent); margin-top:4px;">Crestron Home OS</div>
+      <div style="font-size:.82rem; color:var(--ms-text2); margin-top:8px;">El mismo panel de control. La misma app. Una única experiencia unificada.</div>
+    </div>
+  </div>
+
+</section>
+</div>
+
+<!-- GALLERY -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Galería de acabados</div>
+    <h2 class="ms-sh-title">Para cada <strong>espacio</strong>, el acabado correcto.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">🖤</div>
+        <span>Horizon Negro texturizado · living contemporáneo</span>
+      </div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">✨</div>
+        <span>Horizon Brushed Brass · comedor de lujo</span>
+      </div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">🔮</div>
+        <span>Horizon Cristal Negro · pasillo minimalista</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ECOSYSTEM -->
+<div class="ms-section-dark">
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">Integración total</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">Un keypad. <strong>Todo el hogar.</strong></h2>
+  <p class="ms-sh-sub">Al elegir cualquier keypad Crestron, controlás desde ese único punto de contacto todo el ecosistema:</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Keypads</span>
+    <span class="ms-chip">Iluminación Zūm</span>
+    <span class="ms-chip">Persianas</span>
+    <span class="ms-chip">Audio DM NAX</span>
+    <span class="ms-chip">Clima</span>
+    <span class="ms-chip">Seguridad</span>
+    <span class="ms-chip">Pantallas táctiles</span>
+    <span class="ms-chip">App móvil</span>
+  </div>
+</div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">Tu hogar merece el <strong>mejor tacto</strong>.</h2>
+    <p class="ms-cta-sub">Consultá con un integrador certificado para encontrar el keypad que combine con tu arquitectura y estilo de vida.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Hablar con un integrador →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: mano tocando elegantemente un keypad Horizon Brushed Brass -->
+      <div class="ms-img-ph" style="height:260px; border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🤚</div>
+        <span>Mano tocando keypad Horizon Brushed Brass · iluminación ambiental cálida</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3); text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+/* ── Horizon Finish ── */
+function setHzFinish(sw) {
+  document.querySelectorAll('#hz-swatches .ms-swatch').forEach(s => s.classList.remove('active'));
+  sw.classList.add('active');
+  const bg = sw.dataset.bg, btnBg = sw.dataset.btn;
+  document.getElementById('hz-finish-name').textContent = sw.dataset.name;
+  document.getElementById('hz-preview').style.background = bg;
+  document.getElementById('hz-kp').style.background = bg;
+  document.querySelectorAll('#hz-kp .kp-btn').forEach(b => b.style.background = btnBg);
+}
+
+/* ── Horizon Backlight ── */
+function setHzBacklight(hue) {
+  const color = `hsl(${hue},90%,55%)`;
+  document.getElementById('hz-bl-preview').style.background = color;
+  document.getElementById('hz-bl-preview').style.boxShadow = `0 0 14px ${color}`;
+  document.getElementById('hz-ring').style.borderColor = color;
+  document.getElementById('hz-ring').style.boxShadow = `0 0 20px ${color}40`;
+  const names = {0:'Rojo',30:'Naranja',60:'Amarillo',120:'Verde',180:'Cyan',195:'Cyan',240:'Azul',270:'Violeta',300:'Magenta',360:'Rojo'};
+  const closest = Object.keys(names).reduce((a,b) => Math.abs(b-hue)<Math.abs(a-hue)?b:a);
+  document.getElementById('hz-bl-val').textContent = names[closest];
+  document.querySelectorAll('#kp-horizon .ms-scene-btn').forEach(b => b.classList.remove('active'));
+}
+
+/* ── Horizon Scene ── */
+function setHzScene(btn, color, name) {
+  document.querySelectorAll('#kp-horizon .ms-scene-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('hz-bl-preview').style.background = color;
+  document.getElementById('hz-bl-preview').style.boxShadow = `0 0 14px ${color}`;
+  document.getElementById('hz-ring').style.borderColor = color === 'rgba(255,255,255,0)' ? 'transparent' : color;
+  document.getElementById('hz-ring').style.boxShadow = color === 'rgba(255,255,255,0)' ? 'none' : `0 0 20px ${color}50`;
+  document.getElementById('hz-kp-scene').textContent = `Escena: ${name}`;
+}
+
+/* ── Toggle KP Button LED ── */
+function toggleKpBtn(btn) {
+  const led = btn.querySelector('.kp-btn-led');
+  led.classList.toggle('on');
+}
+
+/* ── Cameo Color ── */
+function setCameoColor(sw) {
+  document.querySelectorAll('#cam-swatches .ms-swatch').forEach(s => s.classList.remove('active'));
+  sw.classList.add('active');
+  document.getElementById('cam-color-name').textContent = sw.dataset.name;
+  document.querySelectorAll('#cam-device-wrap .cameo-device').forEach(d => d.style.background = sw.dataset.color);
+}
+
+/* ── Cameo Buttons ── */
+function setCameoButtons(btn, count) {
+  document.querySelectorAll('#kp-cameo .ms-scene-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCameo(count);
+}
+
+function renderCameo(count) {
+  const wrap = document.getElementById('cam-device-wrap');
+  const color = document.querySelector('#cam-swatches .ms-swatch.active')?.dataset.color || '#1a1a1a';
+  let html = `<div class="cameo-device" style="background:${color};">`;
+  for(let i=0; i<count; i++) {
+    html += `<button class="cameo-rocker" onclick="this.style.background='rgba(0,157,199,.2)';setTimeout(()=>this.style.background='',400)"></button>`;
+  }
+  html += `<div class="cameo-color-label">${count} btn</div></div>`;
+  wrap.innerHTML = html;
+}
+
+/* ── Product Tabs ── */
+function switchKpTab(name, btn) {
+  document.querySelectorAll('.ms-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.ms-panel').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('kp-' + name).classList.add('active');
+}
+
+/* ── Scroll Reveal ── */
+const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.15});
+document.querySelectorAll('.ms-reveal').forEach(el => obs.observe(el));
+
+/* ── Init ── */
+renderCameo(4);
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>

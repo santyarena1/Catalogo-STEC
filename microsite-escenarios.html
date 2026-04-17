@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Crestron Home — Escenarios &amp; Automatización</title>
+<link rel="stylesheet" href="microsite.css">
+<style>
+/* ── Scene Cards ── */
+.scene-carousel {
+  display:grid; grid-template-columns:repeat(4,1fr); gap:14px;
+  margin-bottom:48px;
+}
+.scene-card {
+  border-radius:var(--ms-radius-lg); overflow:hidden;
+  border:2px solid transparent;
+  cursor:pointer; transition:all .28s;
+  position:relative;
+}
+.scene-card.active { border-color:var(--ms-accent); }
+.scene-card-bg {
+  padding:28px 20px 20px;
+  min-height:180px;
+  display:flex; flex-direction:column; justify-content:flex-end;
+  position:relative;
+}
+.scene-card-bg::before {
+  content:''; position:absolute; inset:0;
+  background:rgba(0,0,0,.45);
+  transition:opacity .28s;
+}
+.scene-card:hover .scene-card-bg::before { opacity:.25; }
+.scene-card.active .scene-card-bg::before { opacity:.2; }
+.scene-card-ico { font-size:2.4rem; margin-bottom:10px; position:relative; z-index:1; }
+.scene-card-name {
+  font-size:.88rem; font-weight:700; color:#fff;
+  position:relative; z-index:1;
+}
+.scene-card-tag {
+  font-size:.65rem; color:rgba(255,255,255,.6);
+  position:relative; z-index:1; margin-top:3px;
+}
+.scene-active-badge {
+  position:absolute; top:12px; right:12px;
+  background:var(--ms-accent); color:#fff;
+  font-size:.62rem; font-weight:700; padding:3px 9px;
+  border-radius:50px; letter-spacing:.06em;
+  opacity:0; transition:opacity .22s;
+}
+.scene-card.active .scene-active-badge { opacity:1; }
+
+/* ── Scene Stage ── */
+.scene-stage {
+  background:var(--ms-surface2);
+  border:1px solid var(--ms-border);
+  border-radius:var(--ms-radius-lg);
+  overflow:hidden; transition:all .35s;
+}
+.scene-header {
+  padding:24px 32px 0;
+  display:flex; align-items:flex-start; gap:16px;
+}
+.scene-emoji-big { font-size:3rem; line-height:1; flex-shrink:0; }
+.scene-title { font-size:1.5rem; font-weight:700; color:var(--ms-text); }
+.scene-sub { font-size:.85rem; color:var(--ms-text2); line-height:1.7; margin-top:4px; }
+
+.scene-body {
+  display:grid; grid-template-columns:1fr 1fr; gap:32px;
+  padding:28px 32px 32px;
+}
+
+/* ── Device status row ── */
+.dev-status-list { display:flex; flex-direction:column; gap:10px; }
+.dev-status-row {
+  display:flex; align-items:center; gap:12px;
+  padding:12px 16px;
+  background:var(--ms-surface3);
+  border-radius:10px;
+  transition:all .4s;
+}
+.dev-status-row .dev-ico { font-size:1rem; width:28px; text-align:center; flex-shrink:0; }
+.dev-status-name { font-size:.78rem; color:var(--ms-text2); flex:1; }
+.dev-status-val {
+  font-size:.76rem; font-weight:600; color:var(--ms-accent);
+  transition:all .4s;
+}
+.dev-status-bar-wrap { flex:1; max-width:80px; }
+.dev-status-bar-track { height:3px; border-radius:2px; background:var(--ms-surface); overflow:hidden; }
+.dev-status-bar-fill { height:100%; border-radius:2px; background:var(--ms-accent); transition:width .6s cubic-bezier(.4,0,.2,1); }
+
+/* ── Image placeholder for scene ── */
+.scene-img-ph {
+  border-radius:var(--ms-radius);
+  overflow:hidden; height:100%; min-height:180px;
+}
+
+/* ── Automation timeline ── */
+.auto-timeline { position:relative; padding-left:24px; }
+.auto-timeline::before {
+  content:''; position:absolute; left:7px; top:8px; bottom:8px;
+  width:2px; background:linear-gradient(180deg,var(--ms-accent),transparent);
+}
+.auto-event {
+  position:relative; padding:12px 0 12px 20px; transition:opacity .3s;
+}
+.auto-event::before {
+  content:''; position:absolute; left:-17px; top:19px;
+  width:10px; height:10px; border-radius:50%;
+  background:var(--ms-surface3); border:2px solid var(--ms-border);
+  transition:all .3s;
+}
+.auto-event.done::before { background:var(--ms-accent); border-color:var(--ms-accent); box-shadow:0 0 8px var(--ms-accent-glow); }
+.auto-event-time { font-size:.68rem; color:var(--ms-text3); letter-spacing:.06em; }
+.auto-event-name { font-size:.82rem; color:var(--ms-text2); margin-top:2px; }
+.auto-event.done .auto-event-name { color:var(--ms-text); }
+
+/* ── Stats row ── */
+.scene-stats { display:flex; gap:32px; padding:20px 32px; border-top:1px solid var(--ms-border); flex-wrap:wrap; }
+.scene-stat-item { text-align:center; }
+.scene-stat-val { font-size:1.4rem; font-weight:700; color:var(--ms-accent); }
+.scene-stat-label { font-size:.66rem; color:var(--ms-text3); letter-spacing:.06em; text-transform:uppercase; margin-top:2px; }
+</style>
+  <link rel="stylesheet" href="admin.css">
+  <link rel="stylesheet" href="annotations.css">
+</head>
+<body class="ms-body">
+
+<nav class="ms-nav">
+  <a class="ms-nav-back" href="index.html">← Volver al inicio</a>
+  <div class="ms-nav-sep"></div>
+  <div class="ms-nav-badge">Crestron Home Ecosystem</div>
+  <span class="ms-nav-cat">Escenarios &amp; Automatización</span>
+</nav>
+
+<!-- HERO -->
+<section class="ms-hero" style="background:radial-gradient(ellipse 80% 60% at 50% 60%,rgba(0,157,199,.1),transparent),linear-gradient(160deg,#080f18 40%,#06111e);">
+  <div class="ms-hero-noise"></div>
+  <div class="ms-hero-content">
+    <div class="ms-hero-label">Micrositio · Escenarios &amp; Automatización</div>
+    <h1 class="ms-hero-title">Un toque.<br><strong>El ambiente</strong><br>perfecto.</h1>
+    <p class="ms-hero-sub">Luces, persianas, música, clima y cerraduras: todo ajustado en un instante. Crestron Home orquesta cada aspecto del hogar con una precisión que se siente mágica.</p>
+    <a href="#escenarios" class="ms-hero-cta">Activar una escena</a>
+  </div>
+  <div class="ms-hero-visual">
+    <div class="ms-hero-visual-content">
+      <!-- imagen: sala de cine en casa con iluminación perfecta, persiana bajada, atmósfera premium -->
+      <div class="ms-img-ph">
+        <div class="ms-img-ph-icon">🎬</div>
+        <span>Home cinema · escena "Cine" activa · luces atenuadas azul-frío · persiana cerrada</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- INTRO -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">La potencia de la automatización</div>
+    <h2 class="ms-sh-title">Un comando que mueve <strong>todo el hogar</strong>.</h2>
+    <p class="ms-sh-sub">Una escena Crestron puede coordinar simultáneamente decenas de dispositivos: cada uno sabe exactamente qué hacer y cuándo.</p>
+  </div>
+  <div class="ms-grid-4">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">⚡</div>
+      <div class="ms-card-title">Instantáneo</div>
+      <div class="ms-card-text">Todos los dispositivos responden al mismo tiempo. No hay esperas ni secuencias torpes. El hogar cambia como si siempre hubiera estado así.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🧠</div>
+      <div class="ms-card-title">Inteligente</div>
+      <div class="ms-card-text">Las escenas se activan también por sensores, horarios, geolocalización o comandos de voz. El hogar anticipa, no solo obedece.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🎨</div>
+      <div class="ms-card-title">Personalizable</div>
+      <div class="ms-card-text">Cada escena es tuya: ajustá temperatura, intensidades, fuentes de audio y posición de persianas a tu gusto exacto.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🔗</div>
+      <div class="ms-card-title">Todo integrado</div>
+      <div class="ms-card-text">Iluminación, clima, audio, persianas y seguridad trabajando en conjunto. No hay sistema aislado en un hogar Crestron.</div>
+    </div>
+  </div>
+</section>
+
+<!-- SCENE SELECTOR -->
+<div class="ms-section-dark">
+<section class="ms-section" id="escenarios">
+  <div class="ms-sh ms-reveal">
+    <div class="ms-sh-label">Demo interactivo</div>
+    <h2 class="ms-sh-title">Elegí una escena y <strong>mirá cómo responde el hogar</strong>.</h2>
+    <p class="ms-sh-sub">Hacé clic en cualquier escena para ver cómo cada dispositivo se ajusta automáticamente.</p>
+  </div>
+
+  <div class="scene-carousel ms-reveal" id="scene-carousel">
+    <div class="scene-card active" onclick="activateScene('cine')">
+      <div class="scene-card-bg" style="background:linear-gradient(160deg,#0a0f1a,#1a0a2e);">
+        <div class="scene-active-badge">ACTIVA</div>
+        <div class="scene-card-ico">🎬</div>
+        <div class="scene-card-name">Cine</div>
+        <div class="scene-card-tag">Home cinema completo</div>
+      </div>
+    </div>
+    <div class="scene-card" onclick="activateScene('amanecer')">
+      <div class="scene-card-bg" style="background:linear-gradient(160deg,#1a0a04,#3d1f08);">
+        <div class="scene-active-badge">ACTIVA</div>
+        <div class="scene-card-ico">🌅</div>
+        <div class="scene-card-name">Amanecer</div>
+        <div class="scene-card-tag">Despertar gradual y suave</div>
+      </div>
+    </div>
+    <div class="scene-card" onclick="activateScene('reunion')">
+      <div class="scene-card-bg" style="background:linear-gradient(160deg,#041a14,#0a3026);">
+        <div class="scene-active-badge">ACTIVA</div>
+        <div class="scene-card-ico">💼</div>
+        <div class="scene-card-name">Reunión</div>
+        <div class="scene-card-tag">Ambiente profesional</div>
+      </div>
+    </div>
+    <div class="scene-card" onclick="activateScene('fiesta')">
+      <div class="scene-card-bg" style="background:linear-gradient(160deg,#1a0a18,#2e0a30);">
+        <div class="scene-active-badge">ACTIVA</div>
+        <div class="scene-card-ico">🎉</div>
+        <div class="scene-card-name">Fiesta</div>
+        <div class="scene-card-tag">Energía y diversión</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scene Stage -->
+  <div class="scene-stage ms-reveal" id="scene-stage">
+    <div class="scene-header" id="scene-header">
+      <div class="scene-emoji-big" id="scene-emoji">🎬</div>
+      <div>
+        <div class="scene-title" id="scene-title">Escena: Cine</div>
+        <div class="scene-sub" id="scene-sub">Las luces bajan a un 5%, la persiana cierra completamente, el sistema de audio del home theater se activa y el termostato baja a 20°C para un ambiente fresco de sala de proyección.</div>
+      </div>
+    </div>
+
+    <div class="scene-body">
+      <div>
+        <div class="ms-config-label" style="margin-bottom:14px;">Estado de dispositivos</div>
+        <div class="dev-status-list" id="dev-status-list">
+          <!-- filled by JS -->
+        </div>
+      </div>
+      <div>
+        <div class="ms-config-label" style="margin-bottom:14px;">Secuencia de activación</div>
+        <div class="auto-timeline" id="auto-timeline">
+          <!-- filled by JS -->
+        </div>
+        <!-- Imagen placeholder de la escena -->
+        <div class="scene-img-ph" style="margin-top:20px;">
+          <div class="ms-img-ph" id="scene-img-ph" style="min-height:140px;border-radius:var(--ms-radius);">
+            <div class="ms-img-ph-icon" id="scene-ph-icon">🎬</div>
+            <span id="scene-ph-label">Home cinema · luces atenuadas · persiana cerrada · sistema activo</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="scene-stats" id="scene-stats">
+      <!-- filled by JS -->
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- AUTOMATION TRIGGERS -->
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Disparadores de automatización</div>
+    <h2 class="ms-sh-title">El hogar actúa <strong>sin que lo pidas</strong>.</h2>
+    <p class="ms-sh-sub">Las escenas no solo se activan a mano. Crestron Home puede ejecutarlas automáticamente según el contexto.</p>
+  </div>
+  <div class="ms-grid-3" style="gap:20px;">
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">⏰</div>
+      <div class="ms-card-title">Por horario</div>
+      <div class="ms-card-text">Amanecer gradual a las 7:00 AM. Modo noche a las 23:00. Cada día, sin acordarte de nada.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📍</div>
+      <div class="ms-card-title">Por geolocalización</div>
+      <div class="ms-card-text">El hogar detecta cuando tu teléfono se acerca y prepara el ambiente antes de que llegues a la puerta.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🌤️</div>
+      <div class="ms-card-title">Por clima exterior</div>
+      <div class="ms-card-text">Si el sol está fuerte, las persianas bajan solas para proteger el interior. Si hay lluvia, el jardín no se riega.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">👁️</div>
+      <div class="ms-card-title">Por sensores</div>
+      <div class="ms-card-text">Movimiento detectado enciende la luz del hall. Nadie en la habitación durante 30 minutos apaga todo.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">🎙️</div>
+      <div class="ms-card-title">Por voz</div>
+      <div class="ms-card-text">"Alexa, modo cine." "Oye Siri, buenos días." Compatibilidad nativa con los asistentes más populares.</div>
+    </div>
+    <div class="ms-card ms-reveal">
+      <div class="ms-card-icon">📱</div>
+      <div class="ms-card-title">Desde la app</div>
+      <div class="ms-card-text">Un toque desde cualquier lugar del mundo. Llegás en 20 minutos y ya pedís que esté todo listo.</div>
+    </div>
+  </div>
+</section>
+
+<!-- GALLERY -->
+<div class="ms-section-dark">
+<section class="ms-section ms-reveal">
+  <div class="ms-sh">
+    <div class="ms-sh-label">Cada momento, su ambiente</div>
+    <h2 class="ms-sh-title">Ambientes que <strong>cuentan historias</strong>.</h2>
+  </div>
+  <div class="ms-grid-3" style="gap:16px;">
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🌙</div><span>Dormitorio · escena Noche · luz tenue cálida · persiana cerrada · 19°C en display</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🌅</div><span>Dormitorio · escena Amanecer · persiana abriendo gradualmente · luz natural entrando</span></div>
+    </div>
+    <div class="ms-img-ph-ratio ms-reveal">
+      <div class="ms-img-ph"><div class="ms-img-ph-icon">🎉</div><span>Living · escena Fiesta · luces de colores · personas bailando · atmósfera vibrante</span></div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ECOSYSTEM -->
+<div class="ms-ecosystem ms-reveal">
+  <div class="ms-sh-label">La suma de todo el ecosistema</div>
+  <h2 class="ms-sh-title" style="margin-bottom:12px;">Las escenas son el<br><strong>lenguaje del hogar inteligente</strong>.</h2>
+  <p class="ms-sh-sub">Cada producto Crestron habla el mismo idioma. Y las escenas son las frases que los hacen actuar en armonía.</p>
+  <div class="ms-eco-chips">
+    <span class="ms-chip current">Escenarios</span>
+    <span class="ms-chip">Iluminación Zūm</span>
+    <span class="ms-chip">Persianas QMT</span>
+    <span class="ms-chip">Audio DM NAX</span>
+    <span class="ms-chip">Clima Horizon</span>
+    <span class="ms-chip">Cerraduras Yale</span>
+    <span class="ms-chip">Keypads</span>
+    <span class="ms-chip">Pantallas</span>
+    <span class="ms-chip">Control por voz</span>
+    <span class="ms-chip">App Crestron Home</span>
+  </div>
+</div>
+
+<!-- CTA -->
+<section class="ms-cta ms-reveal">
+  <div class="ms-cta-inner">
+    <div class="ms-tag" style="margin:0 auto 20px;">Crestron Home Argentina</div>
+    <h2 class="ms-cta-title">Diseñá los escenarios<br><strong>de tu vida ideal</strong>.</h2>
+    <p class="ms-cta-sub">Un integrador certificado trabaja con vos para programar cada escena exactamente como la imaginás.</p>
+    <a href="index.html#contacto" class="ms-cta-btn">Comenzar el proyecto →</a>
+    <div class="ms-cta-img-wrap">
+      <!-- imagen aspiracional: familia disfrutando una noche en casa · iluminación perfecta · tecnología invisible -->
+      <div class="ms-img-ph" style="height:280px;border-radius:var(--ms-radius-lg);">
+        <div class="ms-img-ph-icon">🏡</div>
+        <span>Familia en living · escena perfecta activa · iluminación ideal · tecnología invisible · felicidad cotidiana</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer class="ms-footer">
+  <span class="ms-footer-brand">CRESTRON HOME</span>
+  <span>Distribuido por Soundtec SRL · Argentina</span>
+  <a href="index.html" style="color:var(--ms-text3);text-decoration:none;">← Volver al inicio</a>
+</footer>
+
+<script>
+const SCENES = {
+  cine: {
+    emoji: '🎬', title: 'Escena: Cine',
+    sub: 'Las luces bajan a un 5%, la persiana cierra completamente, el home theater se activa y el termostato baja a 20°C para un ambiente fresco de sala de proyección.',
+    phIcon: '🎬', phLabel: 'Home cinema · luces atenuadas · persiana cerrada · sistema de audio activo',
+    devices: [
+      { ico:'💡', name:'Iluminación Living',  val:'5%',   bar:5,   color:'#009DC7' },
+      { ico:'🪟', name:'Persianas',           val:'100%', bar:100, color:'#009DC7' },
+      { ico:'🔊', name:'Audio Home Theater',  val:'70%',  bar:70,  color:'#009DC7' },
+      { ico:'🌡️', name:'Temperatura',         val:'20°C', bar:40,  color:'#009DC7' },
+      { ico:'🔐', name:'Cerradura',           val:'LOCK', bar:100, color:'rgba(255,120,120,.7)' },
+    ],
+    timeline: ['0.0s — Escena "Cine" activada', '0.1s — Luces a 5%', '0.2s — Persianas cerrando', '0.4s — Home Theater ON', '0.6s — Termostato 20°C', '1.2s — Sistema listo ✓'],
+    stats: [{ val:'6', label:'Dispositivos' }, { val:'1.2s', label:'Activación total' }, { val:'0', label:'Pasos manuales' }],
+  },
+  amanecer: {
+    emoji: '🌅', title: 'Escena: Amanecer',
+    sub: 'Las persianas suben gradualmente en 15 minutos, la luz aumenta del 0% al 40% simulando la luz solar, la música suave empieza a las 7:00 y el termostato sube a 22°C.',
+    phIcon: '🌅', phLabel: 'Dormitorio al amanecer · persiana subiendo gradualmente · luz natural entrando · música suave',
+    devices: [
+      { ico:'💡', name:'Iluminación Dormitorio', val:'40%', bar:40,  color:'#FFD700' },
+      { ico:'🪟', name:'Persianas',              val:'85%', bar:15,  color:'#FFD700' },
+      { ico:'🔊', name:'Audio Dormitorio',        val:'20%', bar:20,  color:'#FFD700' },
+      { ico:'🌡️', name:'Temperatura',            val:'22°C',bar:50,  color:'#FFD700' },
+      { ico:'☕', name:'Cafetera',               val:'ON',  bar:100, color:'#FFD700' },
+    ],
+    timeline: ['07:00 — Escena programada inicia', '07:00 — Persianas subiendo (15 min)', '07:01 — Luz al 10% y subiendo', '07:05 — Música a 15%', '07:08 — Termostato 22°C', '07:15 — Ambiente completado ✓'],
+    stats: [{ val:'5', label:'Dispositivos' }, { val:'15min', label:'Transición suave' }, { val:'07:00', label:'Activación diaria' }],
+  },
+  reunion: {
+    emoji: '💼', title: 'Escena: Reunión',
+    sub: 'Iluminación neutra al 80%, persianas a media altura para iluminación natural, música instrumental baja en todas las zonas, temperatura en 21°C y puerta principal bloqueada.',
+    phIcon: '💼', phLabel: 'Sala de reuniones · iluminación neutra · vista exterior · ambiente profesional',
+    devices: [
+      { ico:'💡', name:'Iluminación Sala',  val:'80%', bar:80,  color:'#00e5a0' },
+      { ico:'🪟', name:'Persianas',         val:'50%', bar:50,  color:'#00e5a0' },
+      { ico:'🔊', name:'Audio Sala',         val:'30%', bar:30,  color:'#00e5a0' },
+      { ico:'🌡️', name:'Temperatura',       val:'21°C',bar:45,  color:'#00e5a0' },
+      { ico:'🔐', name:'Privacidad',        val:'ON',  bar:100, color:'#00e5a0' },
+    ],
+    timeline: ['0.0s — Escena "Reunión" activada', '0.1s — Luces al 80% neutro', '0.2s — Persianas al 50%', '0.3s — Música instrumental ON', '0.4s — Termostato 21°C', '0.8s — Sistema listo ✓'],
+    stats: [{ val:'5', label:'Dispositivos' }, { val:'0.8s', label:'Activación total' }, { val:'21°C', label:'Confort garantizado' }],
+  },
+  fiesta: {
+    emoji: '🎉', title: 'Escena: Fiesta',
+    sub: 'Luces al 100% con colores dinámicos, todas las zonas de audio encendidas al 85%, persianas abiertas para ambientes ventilados y keypad desbloqueado para acceso libre.',
+    phIcon: '🎉', phLabel: 'Living · escena Fiesta · luces de colores · personas · música alta · energía máxima',
+    devices: [
+      { ico:'💡', name:'Iluminación (todas)',   val:'100%', bar:100, color:'#FF6B35' },
+      { ico:'🪟', name:'Persianas',             val:'0%',   bar:0,   color:'#FF6B35' },
+      { ico:'🔊', name:'Audio (todas las zonas)',val:'85%', bar:85,  color:'#FF6B35' },
+      { ico:'🌡️', name:'Temperatura',          val:'20°C', bar:40,  color:'#FF6B35' },
+      { ico:'🚪', name:'Acceso invitados',      val:'ON',  bar:100, color:'#FF6B35' },
+    ],
+    timeline: ['0.0s — Escena "Fiesta" activada', '0.1s — Luces al 100% · colores', '0.1s — Audio todas las zonas', '0.2s — Persianas abiertas', '0.3s — Acceso invitados ON', '0.5s — ¡Todo listo! ✓'],
+    stats: [{ val:'8', label:'Zonas de audio' }, { val:'0.5s', label:'Activación total' }, { val:'100%', label:'Energía al máximo' }],
+  },
+};
+
+let currentScene = 'cine';
+
+function activateScene(name) {
+  currentScene = name;
+  const data = SCENES[name];
+
+  // update cards
+  document.querySelectorAll('.scene-card').forEach((c, i) => {
+    const scenes = ['cine','amanecer','reunion','fiesta'];
+    c.classList.toggle('active', scenes[i] === name);
+  });
+
+  // update stage header
+  document.getElementById('scene-emoji').textContent = data.emoji;
+  document.getElementById('scene-title').textContent = data.title;
+  document.getElementById('scene-sub').textContent = data.sub;
+
+  // update placeholder
+  document.getElementById('scene-ph-icon').textContent = data.phIcon;
+  document.getElementById('scene-ph-label').textContent = data.phLabel;
+
+  // update devices
+  const list = document.getElementById('dev-status-list');
+  list.innerHTML = data.devices.map(d => `
+    <div class="dev-status-row">
+      <div class="dev-ico">${d.ico}</div>
+      <div class="dev-status-name">${d.name}</div>
+      <div class="dev-status-bar-wrap">
+        <div class="dev-status-bar-track">
+          <div class="dev-status-bar-fill" style="width:0%;background:${d.color};" data-target="${d.bar}"></div>
+        </div>
+      </div>
+      <div class="dev-status-val" style="color:${d.color};">${d.val}</div>
+    </div>
+  `).join('');
+
+  // animate bars with stagger
+  setTimeout(() => {
+    list.querySelectorAll('.dev-status-bar-fill').forEach((bar, i) => {
+      setTimeout(() => { bar.style.width = bar.dataset.target + '%'; }, i * 80);
+    });
+  }, 50);
+
+  // update timeline
+  const timeline = document.getElementById('auto-timeline');
+  timeline.innerHTML = data.timeline.map((ev, i) => `
+    <div class="auto-event" id="ae-${i}">
+      <div class="auto-event-time">${ev.split(' — ')[0]}</div>
+      <div class="auto-event-name">${ev.split(' — ')[1] || ''}</div>
+    </div>
+  `).join('');
+
+  // animate timeline events
+  data.timeline.forEach((_, i) => {
+    setTimeout(() => {
+      document.getElementById('ae-' + i)?.classList.add('done');
+    }, i * 200 + 100);
+  });
+
+  // update stats
+  document.getElementById('scene-stats').innerHTML = data.stats.map(s => `
+    <div class="scene-stat-item">
+      <div class="scene-stat-val">${s.val}</div>
+      <div class="scene-stat-label">${s.label}</div>
+    </div>
+  `).join('');
+}
+
+/* ── Scroll Reveal ── */
+const obs = new IntersectionObserver(entries => entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); }), {threshold:.1});
+document.querySelectorAll('.ms-reveal').forEach(el => obs.observe(el));
+
+/* ── Init ── */
+activateScene('cine');
+</script>
+  <script src="config.js"></script>
+  <script src="admin.js"></script>
+  <script src="annotations.js"></script>
+</body>
+</html>
